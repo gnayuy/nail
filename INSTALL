@@ -1,0 +1,26 @@
+# This document will show you step by step compiling nail and all dependent toolkit.
+# If you work on Linux, for example, Fedora, you can try "yum install gcc gcc-c++" to obtain stable version of gcc/g++ compiler.
+
+
+# set your own environment, by default /usr/local
+PREFIX=$1
+
+export LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH
+
+# gflags
+
+mkdir build
+cd build
+ccmake ..
+make
+make install
+
+# nail
+
+mkdir build
+cd build
+cmake ..
+make
+make install
+
+# If you still have any questions, please contact Yang at gnayuy@gmail.com.
