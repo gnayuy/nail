@@ -1,5 +1,5 @@
 # nail
-nail: a neural activity imaging library
+A neural activity imaging library developed for analyzing calcium (GCaMP) imaging data.
 
 ## compile with cmake
 Install [LibTIFF][] for reading/writing TIFF images.
