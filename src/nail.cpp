@@ -41,24 +41,76 @@ Image::~Image()
     }
 }
 
-void Image::getOffset(string octreepath, double ox, double oy, double oz, double vx, double vy, double vz, long dimx, long dimy, long dimz, double &offx, double &offy, double &offz)
-{
-
-}
-
 void Image::setOrigin(double x, double y, double z)
 {
-
+    ox = x;
+    oy = y;
+    oz = z;
 }
 
 void Image::setDimension(long x, long  y, long z)
 {
-
+    sx = x;
+    sy = y;
+    sz = z;
 }
 
 void Image::setResolution(double x, double y, double z)
 {
+    vx = x;
+    vy = y;
+    vz = z;
+}
 
+long Image::dimX()
+{
+    return sx;
+}
+
+long Image::dimY()
+{
+    return sy;
+}
+
+long Image::dimZ()
+{
+    return sz;
+}
+
+void Image::adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRange dst)
+{
+    //
+    long i,j,k, offz, offy, idx;
+
+    //
+    long lengthOri = ori.max - ori.min;
+    long lengthDst = dst.max - dst.min;
+
+    double *lut = NULL;
+    new1dp<double, long>(lut, lengthOri);
+
+    for(i=ori.min; i<ori.max; i++)
+    {
+        idx = i - ori.min;
+
+        lut[idx] = double(lengthDst * idx) / double(lengthOri) + double(dst.min);
+    }
+
+    //
+    for(k=0; k<sz; k++)
+    {
+        offz = k*sx*sy;
+        for(j=0; j<sy; j++)
+        {
+            offy = offz + j*sx;
+            for(i=0; i<sx; i++)
+            {
+                idx = offy + i;
+
+                p[idx] = lut[ p[idx] ];
+            }
+        }
+    }
 }
 
 // class Nail

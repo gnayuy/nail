@@ -25,6 +25,12 @@ private:
 };
 
 //
+struct IntensityRange
+{
+    long min, max;
+};
+
+//
 class Image
 {
 public:
@@ -32,16 +38,21 @@ public:
     ~Image();
     
 public:
-    void getOffset(string octreepath, double ox, double oy, double oz, double vx, double vy, double vz, long dimx, long dimy, long dimz, double &offx, double &offy, double &offz);
     void setOrigin(double x, double y, double z);
     void setDimension(long x, long  y, long z);
     void setResolution(double x, double y, double z);
+
+    long dimX();
+    long dimY();
+    long dimZ();
+
+    void adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRange dst);
 
 public:
     unsigned char *p;
     double ox,oy,oz; // origin
     double vx,vy,vz; // voxelsize
-    long dimx,dimy,dimz; // dimension
+    long sx,sy,sz; // dimension
 };
 
 //

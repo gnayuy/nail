@@ -48,7 +48,7 @@ typedef enum { NoCompression, PackBits, JPEG, Deflate, LZW } CompressionType;
 
 // abs
 template <class T>
-T dm_abs(T x)
+T nail_abs(T x)
 {
     return (x<(T)0)?-x:x;
 }
