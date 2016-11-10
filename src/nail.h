@@ -18,10 +18,10 @@ public:
 
 public:
     void start();
-    double getEclipseTime() const;
+    double getEclipseTime();
 
 private:
-    struct timeval m_startTime, m_endTime;
+    struct timespec m_startTime, m_endTime;
 };
 
 //

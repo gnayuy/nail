@@ -18,10 +18,10 @@ void Timer::start()
     clock_gettime(CLOCK_MONOTONIC, &m_startTime);
 }
 
-double Timer::getEclipseTime() const
+double Timer::getEclipseTime()
 {
     clock_gettime(CLOCK_MONOTONIC, &m_endTime);
-    double diff = m_endTime.tv_sec - m_startTime.tv_sec + double (m_endTime.tv_usec - m_startTime.tv_usec) / 1000000;
+    double diff = m_endTime.tv_sec - m_startTime.tv_sec + double (m_endTime.tv_nsec - m_startTime.tv_nsec) / 1000000000;
 
     return diff;
 }
