@@ -179,9 +179,7 @@ bool checkFileExtension(T* filename, const T* extension)
     return false;
 }
 
-// classes
-
-// tiff image
+// TIFF image I/O class
 class TiffIO
 {
 public:

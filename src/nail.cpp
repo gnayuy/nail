@@ -15,13 +15,13 @@ Timer::~Timer()
 
 void Timer::start()
 {
-    clock_gettime(CLOCK_MONOTONIC, &m_startTime);
+    gettimeofday(&m_startTime, NULL);
 }
 
 double Timer::getEclipseTime()
 {
-    clock_gettime(CLOCK_MONOTONIC, &m_endTime);
-    double diff = m_endTime.tv_sec - m_startTime.tv_sec + double (m_endTime.tv_nsec - m_startTime.tv_nsec) / 1000000000;
+    gettimeofday(&m_endTime, NULL);
+    double diff = m_endTime.tv_sec - m_startTime.tv_sec + double (m_endTime.tv_usec - m_startTime.tv_usec) / 1000000;
 
     return diff;
 }
@@ -30,36 +30,54 @@ double Timer::getEclipseTime()
 Image::Image()
 {
     p = NULL;
+
+    dt = UNKNOWNDATATYPE;
+}
+
+Image::Image(unsigned char *data, long x, long y, long z, long c, long t, float vsx, float vsy, float vsz, DataType type)
+{
+    setData(data);
+
+    setDimension(x,y,z,c,t);
+    setResolution(vsx,vsy,vsz);
+    setDataType(type);
 }
 
 Image::~Image()
 {
-    if(p)
-    {
-        delete []p;
-        p = NULL;
-    }
+    del1dp<unsigned char>(p);
 }
 
-void Image::setOrigin(double x, double y, double z)
+void Image::setOrigin(float x, float y, float z)
 {
     ox = x;
     oy = y;
     oz = z;
 }
 
-void Image::setDimension(long x, long  y, long z)
+void Image::setDimension(long x, long  y, long z, long c, long t)
 {
     sx = x;
     sy = y;
     sz = z;
+    sc = c;
+    st = t;
 }
 
-void Image::setResolution(double x, double y, double z)
+void Image::setResolution(float x, float y, float z)
 {
     vx = x;
     vy = y;
     vz = z;
+}
+
+void Image::setData(unsigned char *data)
+{
+    p = data;
+}
+void Image::setDataType(DataType type)
+{
+    dt = type;
 }
 
 long Image::dimX()
@@ -75,6 +93,41 @@ long Image::dimY()
 long Image::dimZ()
 {
     return sz;
+}
+
+long Image::dimC()
+{
+    return sc;
+}
+
+long Image::dimT()
+{
+    return st;
+}
+
+float Image::voxelSizeX()
+{
+    return vx;
+}
+
+float Image::voxelSizeY()
+{
+    return vy;
+}
+
+float Image::voxelSizeZ()
+{
+    return vz;
+}
+
+unsigned char * Image::data()
+{
+    return p;
+}
+
+DataType Image::dataType()
+{
+    return dt;
 }
 
 void Image::adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRange dst)
@@ -116,20 +169,13 @@ void Image::adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRan
 // class Nail
 Nail::Nail()
 {
-    m_Data = NULL;
 }
 
 Nail::~Nail()
 {
-    clearData();
 }
 
-void Nail::clearData()
-{
-    del1dp<unsigned char>(m_Data);
-}
-
-int Nail::load(unsigned char *&p, string filename)
+int Nail::load(string filename)
 {
     //
     TiffIO tiff;
@@ -154,7 +200,6 @@ int Nail::load(unsigned char *&p, string filename)
     if(datatype==USHORT)
     {
         //
-        unsigned short *pData = (unsigned short*)p;
         unsigned short *pTiff = (unsigned short*)(tiff.getData());
 
     }
@@ -167,37 +212,35 @@ int Nail::load(unsigned char *&p, string filename)
     return 0;
 }
 
-int Nail::save(string filename, long sx, long sy, long sz, long sc, float vsx, float vsy, float vsz, int dataType)
+int Nail::save(string filename)
 {
     //
-    if(!m_Data)
+    if(!m_image.p)
     {
-        cout<<"NULL pointer!"<<endl;
+        cout<<"Empty image!"<<endl;
         return -1;
     }
 
     cout<<"save image as "<<filename<<endl;
-    cout<<"image size: "<<sx<<" "<<sy<<" "<<sz<<" "<<sc<<endl;
-    cout<<"voxel size: "<<vsx<<" "<<vsy<<" "<<vsz<<endl;
 
     //
     TiffIO tif;
 
     //
-    tif.setResX(vsx);
-    tif.setResY(vsy);
-    tif.setResZ(vsz);
+    tif.setResX(m_image.vx);
+    tif.setResY(m_image.vy);
+    tif.setResZ(m_image.vz);
 
-    tif.setDataType(dataType);
+    tif.setDataType(m_image.dt);
 
-    tif.setDimx(sx);
-    tif.setDimy(sy);
-    tif.setDimz(sz);
-    tif.setDimc(sc);
-    tif.setDimt(1);
+    tif.setDimx(m_image.sx);
+    tif.setDimy(m_image.sy);
+    tif.setDimz(m_image.sz);
+    tif.setDimc(m_image.sc);
+    tif.setDimt(m_image.st);
 
     //
-    tif.setData((void*)m_Data);
+    tif.setData((void*)(m_image.p));
     tif.setFileName(const_cast<char*>(filename.c_str()));
 
     //
@@ -214,12 +257,13 @@ DEFINE_uint64(sx, 1, "size (voxels) in x axis");
 DEFINE_uint64(sy, 1, "size (voxels) in y axis");
 DEFINE_uint64(sz, 1, "size (voxels) in z axis");
 DEFINE_uint64(sc, 1, "the number of color channels");
+DEFINE_uint64(st, 1, "the number of time frames");
 DEFINE_uint64(x, 1, "offset (voxels) in x axis");
 DEFINE_uint64(y, 1, "offset (voxels) in y axis");
 DEFINE_uint64(z, 1, "offset (voxels) in z axis");
-DEFINE_double(vsx, 1.0, "voxel size in x axis");
-DEFINE_double(vsy, 1.0, "voxel size in y axis");
-DEFINE_double(vsz, 1.0, "voxel size in z axis");
+DEFINE_double(vx, 1.0, "voxel size in x axis");
+DEFINE_double(vy, 1.0, "voxel size in y axis");
+DEFINE_double(vz, 1.0, "voxel size in z axis");
 
 //
 DEFINE_bool(test, false, "test");
@@ -253,7 +297,7 @@ int main(int argc, char *argv[])
     //
     if(FLAGS_input.substr(FLAGS_input.find_last_of(".") + 1) != "tif")
     {
-        cout<<"Your input "<<FLAGS_input<<" is not a TIFF image!"<<endl;
+        cout<<"Your input \""<<FLAGS_input<<"\" is not a TIFF image!"<<endl;
         return -1;
     }
 

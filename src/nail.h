@@ -5,7 +5,7 @@
 #ifndef __NAIL_H__
 #define __NAIL_H__
 
-#include <time.h>
+#include <sys/time.h>
 #include "dataio.h"
 #include <gflags/gflags.h>
 
@@ -21,7 +21,7 @@ public:
     double getEclipseTime();
 
 private:
-    struct timespec m_startTime, m_endTime;
+    struct timeval m_startTime, m_endTime;
 };
 
 //
@@ -35,24 +35,39 @@ class Image
 {
 public:
     Image();
+    Image(unsigned char *data, long x, long y, long z, long c, long t, float vsx, float vsy, float vsz, DataType type);
     ~Image();
     
 public:
-    void setOrigin(double x, double y, double z);
-    void setDimension(long x, long  y, long z);
-    void setResolution(double x, double y, double z);
+    // image
+    void setOrigin(float x, float y, float z);
+    void setDimension(long x, long  y, long z, long c, long t);
+    void setResolution(float x, float y, float z);
+    void setData(unsigned char *data);
+    void setDataType(DataType type);
 
     long dimX();
     long dimY();
     long dimZ();
+    long dimC();
+    long dimT();
 
+    float voxelSizeX();
+    float voxelSizeY();
+    float voxelSizeZ();
+
+    unsigned char * data();
+    DataType dataType();
+
+    // process
     void adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRange dst);
 
 public:
     unsigned char *p;
-    double ox,oy,oz; // origin
-    double vx,vy,vz; // voxelsize
-    long sx,sy,sz; // dimension
+    float ox,oy,oz; // origin (offset)
+    float vx,vy,vz; // voxelsize
+    long sx,sy,sz,sc,st; // dimension XYZCT
+    DataType dt;
 };
 
 //
@@ -63,13 +78,11 @@ public:
     ~Nail();
 
 public:
-    void clearData();
-
-    int load(unsigned char *&p, string filename);
-    int save(string filename, long sx, long sy, long sz, long sc, float vsx, float vsy, float vsz, int dataType);
+    int load(string filename);
+    int save(string filename);
 
 public:
-    unsigned char *m_Data;
+    Image m_image;
 };
 
 #endif // __NAIL_H__
