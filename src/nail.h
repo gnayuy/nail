@@ -25,9 +25,22 @@ private:
 };
 
 //
-struct IntensityRange
+class IntensityRange
 {
-    long min, max;
+public:
+    IntensityRange();
+    IntensityRange(long min, long max);
+    ~IntensityRange();
+
+public:
+    long min();
+    long max();
+
+    void setMin(long v);
+    void setMax(long v);
+
+public:
+    long _min, _max;
 };
 
 //
@@ -60,6 +73,7 @@ public:
     DataType dataType();
 
     // process
+    void thresholding();
     void adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRange dst);
 
 public:
@@ -80,6 +94,8 @@ public:
 public:
     int load(string filename);
     int save(string filename);
+
+    int adjustIntensity(string in, string out);
 
 public:
     Image m_image;

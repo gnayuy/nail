@@ -81,32 +81,32 @@ void TiffIO::setFileName(char* fileName)
 }
 
 // dimensions
-long TiffIO::getDimx()
+long TiffIO::getDimX()
 {
     return this->dimx;
 }
 
-long TiffIO::getDimy()
+long TiffIO::getDimY()
 {
     return this->dimy;
 }
 
-long TiffIO::getDimz()
+long TiffIO::getDimZ()
 {
     return this->dimz;
 }
 
-long TiffIO::getDimc()
+long TiffIO::getDimC()
 {
     return this->dimc;
 }
 
-long TiffIO::getDimt()
+long TiffIO::getDimT()
 {
     return this->dimt;
 }
 
-void TiffIO::setDimx(long x)
+void TiffIO::setDimX(long x)
 {
     if(x<=0)
     {
@@ -115,7 +115,7 @@ void TiffIO::setDimx(long x)
     this->dimx = x;
 }
 
-void TiffIO::setDimy(long y)
+void TiffIO::setDimY(long y)
 {
     if(y<=0)
     {
@@ -124,7 +124,7 @@ void TiffIO::setDimy(long y)
     this->dimy = y;
 }
 
-void TiffIO::setDimz(long z)
+void TiffIO::setDimZ(long z)
 {
     if(z<=0)
     {
@@ -133,7 +133,7 @@ void TiffIO::setDimz(long z)
     this->dimz = z;
 }
 
-void TiffIO::setDimc(long c)
+void TiffIO::setDimC(long c)
 {
     if(c<=0)
     {
@@ -142,13 +142,28 @@ void TiffIO::setDimc(long c)
     this->dimc = c;
 }
 
-void TiffIO::setDimt(long t)
+void TiffIO::setDimT(long t)
 {
     if(t<=0)
     {
         cout << "invalid t dimension"<<endl;
     }
     this->dimt = t;
+}
+
+float TiffIO::getResX()
+{
+    return resx;
+}
+
+float TiffIO::getResY()
+{
+    return resy;
+}
+
+float TiffIO::getResZ()
+{
+    return resz;
 }
 
 void TiffIO::setResX(float resolution_x)

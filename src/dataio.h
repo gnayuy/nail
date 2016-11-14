@@ -5,25 +5,7 @@
 #ifndef __DATAIO_H__
 #define __DATAIO_H__
 
-//
-#include <deque>
-#include <queue>
-#include <cstdlib>
-#include <cstdio>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <cstring>
-#include <algorithm>
-#include <functional>
-#include <vector>
-#include <cmath>
-#include <ctime>
-#include <limits>
-#include <complex>
-#include <float.h>
-//#include <codecvt>
-using namespace std;
+#include "image.hpp"
 
 //
 #include <tiff.h>
@@ -33,7 +15,6 @@ using namespace std;
 #ifdef Use_OpenMP
 #include <omp.h>
 #endif
-
 
 // types
 typedef enum { UNKNOWNDATATYPE, UCHAR, CHAR, USHORT, SHORT, UINT, INT, ULONG, LONG, FLOAT, DOUBLE } DataType;
@@ -45,42 +26,6 @@ typedef enum { UNKNOWNPIXELTYPE, SCALAR, RGB, RGBA, OFFSET, VECTOR,
 typedef enum { UNKNOWNFILEFORMAT, TIFFIMAGE, VDBIMAGE, RLEIMAGE } IOFileFormat;
 
 typedef enum { NoCompression, PackBits, JPEG, Deflate, LZW } CompressionType;
-
-// abs
-template <class T>
-T nail_abs(T x)
-{
-    return (x<(T)0)?-x:x;
-}
-
-// delete 1d pointer
-template <class T>
-void del1dp(T *&p)
-{
-    if(p) {delete []p; p=NULL;}
-    return;
-}
-
-// new 1d pointer
-template<class T, class Tidx>
-void new1dp(T *&p, Tidx n)
-{
-    //
-    del1dp<T>(p);
-    
-    //
-    try
-    {
-        p = new T [n];
-    }
-    catch(...)
-    {
-        cout<<"Attempt to allocate memory failed!"<<endl;
-        del1dp<T>(p);
-        return;
-    }
-    return;
-}
 
 //
 template <class Tdata, class Tidx>
@@ -207,19 +152,23 @@ public:
     void setFileName(char* fileName);
     
     // dimensions
-    long getDimx();
-    long getDimy();
-    long getDimz();
-    long getDimc();
-    long getDimt();
+    long getDimX();
+    long getDimY();
+    long getDimZ();
+    long getDimC();
+    long getDimT();
     
-    void setDimx(long x);
-    void setDimy(long y);
-    void setDimz(long z);
-    void setDimc(long c);
-    void setDimt(long t);
+    void setDimX(long x);
+    void setDimY(long y);
+    void setDimZ(long z);
+    void setDimC(long c);
+    void setDimT(long t);
     
     // resolutions
+    float getResX();
+    float getResY();
+    float getResZ();
+
     void setResX(float resolution_x);
     void setResY(float resolution_y);
     void setResZ(float resolution_z);

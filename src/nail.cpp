@@ -26,12 +26,63 @@ double Timer::getEclipseTime()
     return diff;
 }
 
+// class IntensityRange
+IntensityRange::IntensityRange()
+{
+
+}
+
+IntensityRange::IntensityRange(long min, long max)
+{
+    setMax(max);
+    setMin(min);
+}
+
+IntensityRange::~IntensityRange()
+{
+
+}
+
+long IntensityRange::min()
+{
+    return _min;
+}
+
+long IntensityRange::max()
+{
+    return _max;
+}
+
+void IntensityRange::setMin(long v)
+{
+    _min = v;
+}
+
+void IntensityRange::setMax(long v)
+{
+    _max = v;
+}
+
 // class Image
 Image::Image()
 {
     p = NULL;
 
     dt = UNKNOWNDATATYPE;
+
+    ox = 0;
+    oy = 0;
+    oz = 0;
+
+    vx = 1.0;
+    vy = 1.0;
+    vz = 1.0;
+
+    sx = 1;
+    sy = 1;
+    sz = 1;
+    sc = 1;
+    st = 1;
 }
 
 Image::Image(unsigned char *data, long x, long y, long z, long c, long t, float vsx, float vsy, float vsz, DataType type)
@@ -130,23 +181,132 @@ DataType Image::dataType()
     return dt;
 }
 
+void Image::thresholding()
+{
+    //
+    // threshold segmentation using k-means
+    //
+
+    //
+    if(!p)
+    {
+        cout<<"Invalid inputs for thresholding function"<<endl;
+        return;
+    }
+
+    //
+    long pagesz;
+    pagesz=sx*sy*sz;
+
+    //
+    if(dt==USHORT)
+    {
+        //
+        unsigned short *data = (unsigned short *)p;
+
+        //
+        long BINS = 4096; // histogram bins
+
+        long *h=NULL, *hc=NULL;
+        new1dp<long, long>(h, BINS);
+        new1dp<long, long>(hc, BINS);
+
+        memset(h, 0, sizeof(long)*BINS);
+
+        // histogram
+        HistogramLUT<unsigned short, long> hlut;
+        hlut.initLUT(data, pagesz, BINS);
+        foreach(pagesz, i)
+        {
+            h[hlut.getIndex(p[i])] ++;
+        }
+
+        // heuristic init center
+        float mub=0.05*(hlut.maxv - hlut.minv) + hlut.minv;
+        float muf=0.30*(hlut.maxv - hlut.minv) + hlut.minv;
+
+        //
+        while (true)
+        {
+            float oldmub=mub, oldmuf=muf;
+
+            for(long i=0; i<BINS; i++)
+            {
+                if(h[i]==0)
+                    continue;
+
+                float cb = nail_abs<float>(float(hlut.lut[i])-mub);
+                float cf = nail_abs<float>(float(hlut.lut[i])-muf);
+
+                hc[i] = (cb<=cf)?1:2; // class 1 and class 2
+            }
+
+            // update centers
+            float sum_b=0, sum_bw=0, sum_f=0, sum_fw=0;
+
+            for(long i=0; i<BINS; i++)
+            {
+                if(h[i]==0)
+                    continue;
+
+                if(hc[i]==1)
+                {
+                    sum_bw += (i+1)*h[i];
+                    sum_b += h[i];
+                }
+                else if(hc[i]==2)
+                {
+                    sum_fw += (i+1)*h[i];
+                    sum_f += h[i];
+                }
+            }
+
+            mub = hlut.lut[ long(sum_bw/sum_b) ];
+            muf = hlut.lut[ long(sum_fw/sum_f) ];
+
+            if(nail_abs<float>(mub - oldmub)<1 && nail_abs<float>(muf - oldmuf)<1)  break;
+        }
+
+        //
+        unsigned short threshold = (mub+muf)/2;
+        for(long i=0; i<pagesz; i++)
+        {
+            if(p[i]>threshold)
+                p[i] = hlut.maxv;
+            else
+                p[i] = hlut.minv;
+        }
+
+        //
+        del1dp<long>(h);
+        del1dp<long>(hc);
+    }
+    else
+    {
+
+    }
+
+    //
+    return;
+}
+
 void Image::adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRange dst)
 {
     //
     long i,j,k, offz, offy, idx;
 
     //
-    long lengthOri = ori.max - ori.min;
-    long lengthDst = dst.max - dst.min;
+    long lengthOri = ori.max() - ori.min();
+    long lengthDst = dst.max() - dst.min();
 
     double *lut = NULL;
     new1dp<double, long>(lut, lengthOri);
 
-    for(i=ori.min; i<ori.max; i++)
+    for(i=ori.min(); i<ori.max(); i++)
     {
-        idx = i - ori.min;
+        idx = i - ori.min();
 
-        lut[idx] = double(lengthDst * idx) / double(lengthOri) + double(dst.min);
+        lut[idx] = double(lengthDst * idx) / double(lengthOri) + double(dst.min());
     }
 
     //
@@ -190,23 +350,11 @@ int Nail::load(string filename)
         return -1;
     }
 
-    long x,y,z;
-    long sx = tiff.getDimx();
-    long sy = tiff.getDimy();
-    long sz = tiff.getDimz();
-    int datatype = tiff.getDataType();
-
     //
-    if(datatype==USHORT)
-    {
-        //
-        unsigned short *pTiff = (unsigned short*)(tiff.getData());
-
-    }
-    else
-    {
-        // other data type
-    }
+    m_image.setData((unsigned char*)(tiff.getData()));
+    m_image.setDimension(tiff.getDimX(),tiff.getDimY(),tiff.getDimZ(),tiff.getDimC(),tiff.getDimT());
+    m_image.setResolution(tiff.getResX(),tiff.getResY(),tiff.getResZ());
+    m_image.setDataType((DataType)(tiff.getDataType()));
 
     //
     return 0;
@@ -233,11 +381,11 @@ int Nail::save(string filename)
 
     tif.setDataType(m_image.dt);
 
-    tif.setDimx(m_image.sx);
-    tif.setDimy(m_image.sy);
-    tif.setDimz(m_image.sz);
-    tif.setDimc(m_image.sc);
-    tif.setDimt(m_image.st);
+    tif.setDimX(m_image.sx);
+    tif.setDimY(m_image.sy);
+    tif.setDimZ(m_image.sz);
+    tif.setDimC(m_image.sc);
+    tif.setDimT(m_image.st);
 
     //
     tif.setData((void*)(m_image.p));
@@ -250,9 +398,32 @@ int Nail::save(string filename)
     return 0;
 }
 
+int Nail::adjustIntensity(string in, string out)
+{
+    // test
+    nDebug<long>(m_image.sc);
+
+    //
+    load(in);
+
+    //
+    IntensityRange ori, dst;
+
+    unsigned short *p = (unsigned short*)(m_image.data());
+
+    m_image.adjustIntensity(p, ori, dst);
+
+    //
+    save(out);
+
+    //
+    return 0;
+}
+
 // CLI
-DEFINE_string(input, "", "input TIFF file name (.tif)");
-DEFINE_string(output, "", "output TIFF file name (.tif)");
+DEFINE_string(f, "", "specify which function to call");
+DEFINE_string(i, "", "input TIFF file name (.tif)");
+DEFINE_string(o, "", "output TIFF file name (.tif)");
 DEFINE_uint64(sx, 1, "size (voxels) in x axis");
 DEFINE_uint64(sy, 1, "size (voxels) in y axis");
 DEFINE_uint64(sz, 1, "size (voxels) in z axis");
@@ -273,8 +444,21 @@ DEFINE_uint64(testOption, 0, "test option");
 int main(int argc, char *argv[])
 {
     //
-    gflags::SetUsageMessage("nail -i <input> -o <output>");
+    gflags::SetUsageMessage("nail -f <func> -i <input> -o <output>");
     gflags::ParseCommandLineFlags(&argc, &argv, true);
+
+    //
+    if(FLAGS_i!=""  && FLAGS_i.substr(FLAGS_i.find_last_of(".") + 1) != "tif")
+    {
+        cout<<"Your input \""<<FLAGS_i<<"\" is not a TIFF image!"<<endl;
+        return -1;
+    }
+
+    if(FLAGS_o!="" && FLAGS_o.substr(FLAGS_o.find_last_of(".") + 1) != "tif")
+    {
+        cout<<"Your output \""<<FLAGS_o<<"\" is not a TIFF image!"<<endl;
+        return -1;
+    }
 
     //
     if(FLAGS_test)
@@ -289,16 +473,20 @@ int main(int argc, char *argv[])
         {
 
         }
-
-        //
-        return 0;
     }
-
-    //
-    if(FLAGS_input.substr(FLAGS_input.find_last_of(".") + 1) != "tif")
+    else
     {
-        cout<<"Your input \""<<FLAGS_input<<"\" is not a TIFF image!"<<endl;
-        return -1;
+        //
+        if(FLAGS_f == "adjustIntensity")
+        {
+            // src/nail -f adjustIntensity -i ../data/gcampchannel_mip.tif -o ../data/test.tif
+            Nail nail;
+            nail.adjustIntensity(FLAGS_i, FLAGS_o);
+        }
+        else
+        {
+
+        }
     }
 
     //

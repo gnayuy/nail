@@ -9,6 +9,7 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 SET( nail_sources
 
 # header files
+    ${PROJECT_SOURCE_DIR}/src/image.hpp
     ${PROJECT_SOURCE_DIR}/src/dataio.h
     ${PROJECT_SOURCE_DIR}/src/nail.h
 
