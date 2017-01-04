@@ -14,6 +14,7 @@ SET( nail_sources
 
 # source files
     ${PROJECT_SOURCE_DIR}/src/nail.cpp
+    ${PROJECT_SOURCE_DIR}/src/main.cpp
 )
 
 # gflags

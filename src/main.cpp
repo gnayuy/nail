@@ -1,6 +1,8 @@
+// main.cpp
+// nail application
+// developed by Yang Yu (gnayuy@gmail.com)
 
 #include "nail.h"
-
 
 // CLI
 DEFINE_string(f, "", "specify which function to call");
