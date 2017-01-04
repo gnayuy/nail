@@ -9,7 +9,8 @@
 #include <gflags/gflags.h>
 
 #include "biomedicaldataio.h"
-#include "image.hpp"
+#include "image.h"
+#include "image.hxx"
 
 //
 class Timer

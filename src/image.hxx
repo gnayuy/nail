@@ -2,56 +2,22 @@
 // define image related template functions
 // developed by Yang Yu (gnayuy@gmail.com)
 
-#ifndef IMAGE_HPP
-#define IMAGE_HPP
-//
-#include <deque>
-#include <queue>
-#include <cstdlib>
-#include <cstdio>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <cstring>
-#include <algorithm>
-#include <functional>
-#include <vector>
-#include <cmath>
-#include <ctime>
-#include <limits>
-#include <complex>
-#include <float.h>
-//#include <codecvt>
-using namespace std;
+#ifndef __IMAGE_HXX__
+#define __IMAGE_HXX__
 
-#ifndef EPSILON
-#define EPSILON 1E-10
-#endif
-
-typedef enum { UNKNOWNDIMTYPE, D1D, D2D, D3D, D4D, D5D, D6D, D7D, D8D, D9D, DND } DimType;
-typedef enum { UNKNOWNTT, TRANSLATION, RIGID, AFFINE, NONRIGID } TransformationType;
-typedef enum { UNKNOWNIT, NearestNeighbor, Linear, BSpline, ThinPlateSpline } InterpolationType;
-typedef enum { UNKNOWNOT, GradientDescent, GaussNewton, LevenbergMarquardt, PowellDogLeg, DownhillSimplex, MRF } OptimizationType;
-typedef enum { UNKNOWNST, SSD, CC, MI } SimilarityType;
-typedef enum { UNKNOWNTD, FORWARD, INVERSE } TransformDirectionType;
+#include "image.h"
 
 // histogram
 template<class Tdata, class Tidx>
-class HistogramLUT
+HistogramLUT<Tdata, Tidx> :: HistogramLUT()
 {
-public:
-    HistogramLUT() { bins=0; index=0; lut=NULL;}
-    ~HistogramLUT(){}
+    bins=0; index=0; lut=NULL;
+}
 
-public:
-    void initLUT(Tdata *p, Tidx sz, Tidx nbins);
-    Tidx getIndex(Tdata val);
-
-public:
-    Tidx bins, index;
-    Tdata *lut; // look up table
-    double minv, maxv;
-};
+template<class Tdata, class Tidx>
+HistogramLUT<Tdata, Tidx> :: ~HistogramLUT()
+{
+}
 
 template<class Tdata, class Tidx>
 void HistogramLUT<Tdata, Tidx> :: initLUT(Tdata *p, Tidx sz, Tidx nbins)
@@ -276,39 +242,42 @@ int computeNCC(Tsrc *src, Tref *ref, Tidx sz, double& ncc)
 //
 
 template <class T>
-class Line2D
+Line2D <T> :: Line2D()
 {
-public:
-    Line2D()
-    {
-        k = 0;
-        b = 0;
-        s = 0;
-    }
-    Line2D(T slope, T intercept)
-    {
-        k = slope;
-        b = intercept;
-    }
-    ~Line2D(){}
+    k = 0;
+    b = 0;
+    s = 0;
+}
 
-public:
-    void slope(T slope)
-    {
-        k = slope;
-    }
-    void intercept(T intercept)
-    {
-        b = intercept;
-    }
-    void score(T score)
-    {
-        s = score;
-    }
+template <class T>
+Line2D <T> :: Line2D(T slope, T intercept)
+{
+    k = slope;
+    b = intercept;
+}
 
-public:
-    T k, b, s;
-};
+template <class T>
+Line2D <T> :: ~Line2D()
+{
+}
+
+template <class T>
+void Line2D <T> :: slope(T slope)
+{
+    k = slope;
+}
+
+template <class T>
+void Line2D <T> :: intercept(T intercept)
+{
+    b = intercept;
+}
+
+template <class T>
+void Line2D <T> :: score(T score)
+{
+    s = score;
+}
 
 template <class Tdata, class Tidx>
 int findOptimalPath(Tdata *p, Tidx x, Tdata minY0, Tdata maxY0, Tdata minY, Tdata maxY, Tdata &k, Tdata &b)
@@ -412,7 +381,7 @@ int reconstructStack(Tdata *slices, Tidx n, Tdata *&stack, Tidx x, Tidx y, Tidx 
     Tidx pagesz = x*y;
 
     //
-    new1dp<Tdata, Tidx>(statk, pagesz*z);
+    new1dp<Tdata, Tidx>(stack, pagesz*z);
 
     //
     for(Tidx i=0; i<n; i++)
@@ -433,4 +402,4 @@ int reconstructStack(Tdata *slices, Tidx n, Tdata *&stack, Tidx x, Tidx y, Tidx 
 
 
 
-#endif // IMAGE_HPP
+#endif // __IMAGE_HXX__
