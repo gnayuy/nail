@@ -2,7 +2,7 @@
 A neural activity imaging library developed for analyzing calcium (GCaMP) imaging data.
 
 ## compile with cmake
-Install [LibTIFF][] for reading/writing TIFF images.
+Install [BioMedicalDataIO][] for reading/writing biomedical images.
 
 Install [gflags][] for using the command lines.
 
@@ -11,5 +11,5 @@ Install [gflags][] for using the command lines.
   
 ##
 
-[LibTIFF]: http://libtiff.org
+[BioMedicalDataIO]: https://github.com/glaivesoft/biomedicaldataio
 [gflags]: https://github.com/gflags/gflags
