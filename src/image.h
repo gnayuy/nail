@@ -1,4 +1,4 @@
-// image.hpp
+// image.h
 // define image related template functions
 // developed by Yang Yu (gnayuy@gmail.com)
 

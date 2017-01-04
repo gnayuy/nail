@@ -67,6 +67,13 @@ int main(int argc, char *argv[])
             Nail nail;
             nail.adjustIntensity(FLAGS_i, FLAGS_o);
         }
+        else if(FLAGS_f == "help")
+        {
+            cout<<endl<<"nail -f <function>"<<endl;
+            cout<<"function list:"<<endl;
+            cout<<"\t"<<"adjustIntensity"<<endl;
+            cout<<endl;
+        }
         else
         {
             
