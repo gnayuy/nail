@@ -235,8 +235,8 @@ void Image::thresholding()
                 if(h[i]==0)
                     continue;
 
-                float cb = nail_abs<float>(float(hlut.lut[i])-mub);
-                float cf = nail_abs<float>(float(hlut.lut[i])-muf);
+                float cb = y_abs<float>(float(hlut.lut[i])-mub);
+                float cf = y_abs<float>(float(hlut.lut[i])-muf);
 
                 hc[i] = (cb<=cf)?1:2; // class 1 and class 2
             }
@@ -264,7 +264,7 @@ void Image::thresholding()
             mub = hlut.lut[ long(sum_bw/sum_b) ];
             muf = hlut.lut[ long(sum_fw/sum_f) ];
 
-            if(nail_abs<float>(mub - oldmub)<1 && nail_abs<float>(muf - oldmuf)<1)  break;
+            if(y_abs<float>(mub - oldmub)<1 && y_abs<float>(muf - oldmuf)<1)  break;
         }
 
         //
@@ -338,23 +338,19 @@ Nail::~Nail()
 int Nail::load(string filename)
 {
     //
-    TiffIO tiff;
+    BioMedicalDataIO bmdata;
 
-    if(tiff.canReadFile(const_cast<char*>(filename.c_str())))
+    if(bmdata.readData(filename)!=0)
     {
-        tiff.read();
-    }
-    else
-    {
-        std::cout<<"Fail to read tiff image "<<filename<<"."<<std::endl;
+        cout<<"Fail to read data!"<<endl;
         return -1;
     }
 
     //
-    m_image.setData((unsigned char*)(tiff.getData()));
-    m_image.setDimension(tiff.getDimX(),tiff.getDimY(),tiff.getDimZ(),tiff.getDimC(),tiff.getDimT());
-    m_image.setResolution(tiff.getResX(),tiff.getResY(),tiff.getResZ());
-    m_image.setDataType((DataType)(tiff.getDataType()));
+    m_image.setData((unsigned char*)(bmdata.getData()));
+    m_image.setDimension(bmdata.getDimX(),bmdata.getDimY(),bmdata.getDimZ(),bmdata.getDimC(),bmdata.getDimT());
+    m_image.setResolution(bmdata.getResX(),bmdata.getResY(),bmdata.getResZ());
+    m_image.setDataType((DataType)(bmdata.getDataType()));
 
     //
     return 0;
@@ -372,36 +368,32 @@ int Nail::save(string filename)
     cout<<"save image as "<<filename<<endl;
 
     //
-    TiffIO tif;
+    BioMedicalDataIO bmdata;
 
     //
-    tif.setResX(m_image.vx);
-    tif.setResY(m_image.vy);
-    tif.setResZ(m_image.vz);
+    bmdata.setResX(m_image.vx);
+    bmdata.setResY(m_image.vy);
+    bmdata.setResZ(m_image.vz);
 
-    tif.setDataType(m_image.dt);
+    bmdata.setDataType(m_image.dt);
 
-    tif.setDimX(m_image.sx);
-    tif.setDimY(m_image.sy);
-    tif.setDimZ(m_image.sz);
-    tif.setDimC(m_image.sc);
-    tif.setDimT(m_image.st);
-
-    //
-    tif.setData((void*)(m_image.p));
-    tif.setFileName(const_cast<char*>(filename.c_str()));
+    bmdata.setDimX(m_image.sx);
+    bmdata.setDimY(m_image.sy);
+    bmdata.setDimZ(m_image.sz);
+    bmdata.setDimC(m_image.sc);
+    bmdata.setDimT(m_image.st);
 
     //
-    tif.write();
+    bmdata.setData((void*)(m_image.p));
 
     //
-    return 0;
+    return bmdata.writeData(filename);
 }
 
 int Nail::adjustIntensity(string in, string out)
 {
     // test
-    nDebug<long>(m_image.sc);
+    y_Debug<long>(m_image.sc);
 
     //
     load(in);

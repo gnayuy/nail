@@ -24,63 +24,6 @@
 //#include <codecvt>
 using namespace std;
 
-#ifndef INF
-#define INF 1E10
-#endif
-
-#ifndef EPS
-#define EPS 1E-10
-#endif
-
-//
-#define foreach(count, iter) 	\
-    for(long iter=0; iter<count; iter++)
-
-// abs
-template <class T>
-T nail_abs(T x)
-{
-    return (x<(T)0)?-x:x;
-}
-
-// delete 1d pointer
-template <class T>
-void del1dp(T *&p)
-{
-    if(p) {delete []p; p=NULL;}
-    return;
-}
-
-// new 1d pointer
-template<class T, class Tidx>
-void new1dp(T *&p, Tidx n)
-{
-    //
-    del1dp<T>(p);
-
-    //
-    try
-    {
-        p = new T [n];
-    }
-    catch(...)
-    {
-        cout<<"Attempt to allocate memory failed!"<<endl;
-        del1dp<T>(p);
-        return;
-    }
-    return;
-}
-
-//
-template <class T>
-void nDebug(T v)
-{
-    cout<<"\n... nDebug ... ";
-    cout<<v;
-    cout<<" ...\n";
-}
-
 // histogram
 template<class Tdata, class Tidx>
 class HistogramLUT
@@ -146,7 +89,7 @@ Tidx HistogramLUT<Tdata, Tidx> :: getIndex(Tdata val)
     {
         Tidx mid=(min+max)/2;
 
-        if(val == lut[mid] || (val > lut[mid] && nail_abs<Tdata>(val - lut[mid])<EPS) ) // =
+        if(val == lut[mid] || (val > lut[mid] && y_abs<Tdata>(val - lut[mid])<EPS) ) // =
         {
             found = true;
             index = mid;

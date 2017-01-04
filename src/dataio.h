@@ -8,8 +8,14 @@
 #include "image.hpp"
 
 //
-#include <tiff.h>
-#include <tiffio.h>
+extern "C" {
+#include "tiff.h"
+#include "tiffio.h"
+
+#include "nifti1_io.h"
+#include "znzlib.h"
+
+};
 
 //
 #ifdef Use_OpenMP

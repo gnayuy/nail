@@ -6,8 +6,10 @@
 #define __NAIL_H__
 
 #include <sys/time.h>
-#include "dataio.h"
 #include <gflags/gflags.h>
+
+#include "biomedicaldataio.h"
+#include "image.hpp"
 
 //
 class Timer
