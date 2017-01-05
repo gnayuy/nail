@@ -32,17 +32,17 @@ int main(int argc, char *argv[])
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     
     //
-    if(FLAGS_i!=""  && FLAGS_i.substr(FLAGS_i.find_last_of(".") + 1) != "tif")
-    {
-        cout<<"Your input \""<<FLAGS_i<<"\" is not a TIFF image!"<<endl;
-        return -1;
-    }
+//    if(FLAGS_i!=""  && FLAGS_i.substr(FLAGS_i.find_last_of(".") + 1) != "tif")
+//    {
+//        cout<<"Your input \""<<FLAGS_i<<"\" is not a TIFF image!"<<endl;
+//        return -1;
+//    }
     
-    if(FLAGS_o!="" && FLAGS_o.substr(FLAGS_o.find_last_of(".") + 1) != "tif")
-    {
-        cout<<"Your output \""<<FLAGS_o<<"\" is not a TIFF image!"<<endl;
-        return -1;
-    }
+//    if(FLAGS_o!="" && FLAGS_o.substr(FLAGS_o.find_last_of(".") + 1) != "tif")
+//    {
+//        cout<<"Your output \""<<FLAGS_o<<"\" is not a TIFF image!"<<endl;
+//        return -1;
+//    }
     
     //
     if(FLAGS_test)
@@ -67,11 +67,18 @@ int main(int argc, char *argv[])
             Nail nail;
             nail.adjustIntensity(FLAGS_i, FLAGS_o);
         }
+        else if(FLAGS_f == "imageReadWrite")
+        {
+            // src/nail -f imageReadWrite -i <input> -o <output>
+            Nail nail;
+            nail.imageReadWrite(FLAGS_i, FLAGS_o);
+        }
         else if(FLAGS_f == "help")
         {
             cout<<endl<<"nail -f <function>"<<endl;
             cout<<"function list:"<<endl;
             cout<<"\t"<<"adjustIntensity"<<endl;
+            cout<<"\t"<<"imageReadWrite"<<endl;
             cout<<endl;
         }
         else

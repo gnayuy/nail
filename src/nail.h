@@ -53,13 +53,13 @@ public:
     ~ImageProcess();
 
 public:
-    void setImage(BioMedicalData image);
-    BioMedicalData getImage();
+    void setImage(BioMedicalData *image);
+    BioMedicalData * getImage();
     void thresholding();
     void adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRange dst);
 
 public:
-    BioMedicalData m_image;
+    BioMedicalData *m_image;
 };
 
 //
@@ -74,6 +74,7 @@ public:
     int save(string filename);
 
     int adjustIntensity(string in, string out);
+    int imageReadWrite(string in, string out);
 
 public:
     ImageProcess process;

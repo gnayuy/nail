@@ -72,12 +72,12 @@ ImageProcess::~ImageProcess()
 {
 }
 
-void ImageProcess::setImage(BioMedicalData image)
+void ImageProcess::setImage(BioMedicalData *image)
 {
     m_image = image;
 }
 
-BioMedicalData ImageProcess::getImage()
+BioMedicalData * ImageProcess::getImage()
 {
     return m_image;
 }
@@ -89,7 +89,7 @@ void ImageProcess::thresholding()
     //
 
     //
-    if(!m_image.data())
+    if(!m_image->data())
     {
         cout<<"Invalid inputs for thresholding function"<<endl;
         return;
@@ -97,13 +97,13 @@ void ImageProcess::thresholding()
 
     //
     long pagesz;
-    pagesz=m_image.size.size();
+    pagesz=m_image->size.size();
 
     //
-    if(m_image.dataType()==USHORT)
+    if(m_image->dataType()==USHORT)
     {
         //
-        unsigned short *data = (unsigned short *)(m_image.data());
+        unsigned short *data = (unsigned short *)(m_image->data());
 
         //
         long BINS = 4096; // histogram bins
@@ -211,13 +211,13 @@ void ImageProcess::adjustIntensity(unsigned short *&p, IntensityRange ori, Inten
     }
 
     //
-    for(k=0; k<m_image.size.getZ(); k++)
+    for(k=0; k<m_image->size.getZ(); k++)
     {
-        offz = k*m_image.size.getX()*m_image.size.getY();
-        for(j=0; j<m_image.size.getY(); j++)
+        offz = k*m_image->size.getX()*m_image->size.getY();
+        for(j=0; j<m_image->size.getY(); j++)
         {
-            offy = offz + j*m_image.size.getX();
-            for(i=0; i<m_image.size.getX(); i++)
+            offy = offz + j*m_image->size.getX();
+            for(i=0; i<m_image->size.getX(); i++)
             {
                 idx = offy + i;
 
@@ -257,7 +257,7 @@ int Nail::load(string filename)
 int Nail::save(string filename)
 {
     //
-    if(!process.getImage().data())
+    if(!process.getImage()->data())
     {
         cout<<"Empty image!"<<endl;
         return -1;
@@ -283,9 +283,21 @@ int Nail::adjustIntensity(string in, string out)
     //
     IntensityRange ori, dst;
 
-    unsigned short *p = (unsigned short*)(process.getImage().data());
+    unsigned short *p = (unsigned short*)(process.getImage()->data());
 
     process.adjustIntensity(p, ori, dst);
+
+    //
+    save(out);
+
+    //
+    return 0;
+}
+
+int Nail::imageReadWrite(string in, string out)
+{
+    //
+    load(in);
 
     //
     save(out);
