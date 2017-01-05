@@ -63,132 +63,33 @@ void IntensityRange::setMax(long v)
     _max = v;
 }
 
-// class Image
-Image::Image()
+// class ImageProcess
+ImageProcess::ImageProcess()
 {
-    p = NULL;
-
-    dt = UNKNOWNDATATYPE;
-
-    ox = 0;
-    oy = 0;
-    oz = 0;
-
-    vx = 1.0;
-    vy = 1.0;
-    vz = 1.0;
-
-    sx = 1;
-    sy = 1;
-    sz = 1;
-    sc = 1;
-    st = 1;
 }
 
-Image::Image(unsigned char *data, long x, long y, long z, long c, long t, float vsx, float vsy, float vsz, DataType type)
+ImageProcess::~ImageProcess()
 {
-    setData(data);
-
-    setDimension(x,y,z,c,t);
-    setResolution(vsx,vsy,vsz);
-    setDataType(type);
 }
 
-Image::~Image()
+void ImageProcess::setImage(BioMedicalData image)
 {
-    del1dp<unsigned char>(p);
+    m_image = image;
 }
 
-void Image::setOrigin(float x, float y, float z)
+BioMedicalData ImageProcess::getImage()
 {
-    ox = x;
-    oy = y;
-    oz = z;
+    return m_image;
 }
 
-void Image::setDimension(long x, long  y, long z, long c, long t)
-{
-    sx = x;
-    sy = y;
-    sz = z;
-    sc = c;
-    st = t;
-}
-
-void Image::setResolution(float x, float y, float z)
-{
-    vx = x;
-    vy = y;
-    vz = z;
-}
-
-void Image::setData(unsigned char *data)
-{
-    p = data;
-}
-void Image::setDataType(DataType type)
-{
-    dt = type;
-}
-
-long Image::dimX()
-{
-    return sx;
-}
-
-long Image::dimY()
-{
-    return sy;
-}
-
-long Image::dimZ()
-{
-    return sz;
-}
-
-long Image::dimC()
-{
-    return sc;
-}
-
-long Image::dimT()
-{
-    return st;
-}
-
-float Image::voxelSizeX()
-{
-    return vx;
-}
-
-float Image::voxelSizeY()
-{
-    return vy;
-}
-
-float Image::voxelSizeZ()
-{
-    return vz;
-}
-
-unsigned char * Image::data()
-{
-    return p;
-}
-
-DataType Image::dataType()
-{
-    return dt;
-}
-
-void Image::thresholding()
+void ImageProcess::thresholding()
 {
     //
     // threshold segmentation using k-means
     //
 
     //
-    if(!p)
+    if(!m_image.data())
     {
         cout<<"Invalid inputs for thresholding function"<<endl;
         return;
@@ -196,13 +97,13 @@ void Image::thresholding()
 
     //
     long pagesz;
-    pagesz=sx*sy*sz;
+    pagesz=m_image.size.size();
 
     //
-    if(dt==USHORT)
+    if(m_image.dataType()==USHORT)
     {
         //
-        unsigned short *data = (unsigned short *)p;
+        unsigned short *data = (unsigned short *)(m_image.data());
 
         //
         long BINS = 4096; // histogram bins
@@ -218,7 +119,7 @@ void Image::thresholding()
         hlut.initLUT(data, pagesz, BINS);
         foreach(pagesz, i)
         {
-            h[hlut.getIndex(p[i])] ++;
+            h[hlut.getIndex(data[i])] ++;
         }
 
         // heuristic init center
@@ -271,10 +172,10 @@ void Image::thresholding()
         unsigned short threshold = (mub+muf)/2;
         for(long i=0; i<pagesz; i++)
         {
-            if(p[i]>threshold)
-                p[i] = hlut.maxv;
+            if(data[i]>threshold)
+                data[i] = hlut.maxv;
             else
-                p[i] = hlut.minv;
+                data[i] = hlut.minv;
         }
 
         //
@@ -290,7 +191,7 @@ void Image::thresholding()
     return;
 }
 
-void Image::adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRange dst)
+void ImageProcess::adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRange dst)
 {
     //
     long i,j,k, offz, offy, idx;
@@ -310,13 +211,13 @@ void Image::adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRan
     }
 
     //
-    for(k=0; k<sz; k++)
+    for(k=0; k<m_image.size.getZ(); k++)
     {
-        offz = k*sx*sy;
-        for(j=0; j<sy; j++)
+        offz = k*m_image.size.getX()*m_image.size.getY();
+        for(j=0; j<m_image.size.getY(); j++)
         {
-            offy = offz + j*sx;
-            for(i=0; i<sx; i++)
+            offy = offz + j*m_image.size.getX();
+            for(i=0; i<m_image.size.getX(); i++)
             {
                 idx = offy + i;
 
@@ -347,10 +248,7 @@ int Nail::load(string filename)
     }
 
     //
-    m_image.setData((unsigned char*)(bmdata.getData()));
-    m_image.setDimension(bmdata.getDimX(),bmdata.getDimY(),bmdata.getDimZ(),bmdata.getDimC(),bmdata.getDimT());
-    m_image.setResolution(bmdata.getResX(),bmdata.getResY(),bmdata.getResZ());
-    m_image.setDataType((DataType)(bmdata.getDataType()));
+    process.setImage(bmdata.data());
 
     //
     return 0;
@@ -359,7 +257,7 @@ int Nail::load(string filename)
 int Nail::save(string filename)
 {
     //
-    if(!m_image.p)
+    if(!process.getImage().data())
     {
         cout<<"Empty image!"<<endl;
         return -1;
@@ -371,20 +269,7 @@ int Nail::save(string filename)
     BioMedicalDataIO bmdata;
 
     //
-    bmdata.setResX(m_image.vx);
-    bmdata.setResY(m_image.vy);
-    bmdata.setResZ(m_image.vz);
-
-    bmdata.setDataType(m_image.dt);
-
-    bmdata.setDimX(m_image.sx);
-    bmdata.setDimY(m_image.sy);
-    bmdata.setDimZ(m_image.sz);
-    bmdata.setDimC(m_image.sc);
-    bmdata.setDimT(m_image.st);
-
-    //
-    bmdata.setData((void*)(m_image.p));
+    bmdata.setData(process.getImage());
 
     //
     return bmdata.writeData(filename);
@@ -392,18 +277,15 @@ int Nail::save(string filename)
 
 int Nail::adjustIntensity(string in, string out)
 {
-    // test
-    y_Debug<long>(m_image.sc);
-
     //
     load(in);
 
     //
     IntensityRange ori, dst;
 
-    unsigned short *p = (unsigned short*)(m_image.data());
+    unsigned short *p = (unsigned short*)(process.getImage().data());
 
-    m_image.adjustIntensity(p, ori, dst);
+    process.adjustIntensity(p, ori, dst);
 
     //
     save(out);

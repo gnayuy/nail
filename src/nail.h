@@ -46,45 +46,20 @@ public:
     long _min, _max;
 };
 
-//
-class Image
+class ImageProcess
 {
 public:
-    Image();
-    Image(unsigned char *data, long x, long y, long z, long c, long t, float vsx, float vsy, float vsz, DataType type);
-    ~Image();
-    
+    ImageProcess();
+    ~ImageProcess();
+
 public:
-    // image
-    void setOrigin(float x, float y, float z);
-    void setDimension(long x, long  y, long z, long c, long t);
-    void setResolution(float x, float y, float z);
-    void setData(unsigned char *data);
-    void setDataType(DataType type);
-
-    long dimX();
-    long dimY();
-    long dimZ();
-    long dimC();
-    long dimT();
-
-    float voxelSizeX();
-    float voxelSizeY();
-    float voxelSizeZ();
-
-    unsigned char * data();
-    DataType dataType();
-
-    // process
+    void setImage(BioMedicalData image);
+    BioMedicalData getImage();
     void thresholding();
     void adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRange dst);
 
 public:
-    unsigned char *p;
-    float ox,oy,oz; // origin (offset)
-    float vx,vy,vz; // voxelsize
-    long sx,sy,sz,sc,st; // dimension XYZCT
-    DataType dt;
+    BioMedicalData m_image;
 };
 
 //
@@ -101,7 +76,7 @@ public:
     int adjustIntensity(string in, string out);
 
 public:
-    Image m_image;
+    ImageProcess process;
 };
 
 #endif // __NAIL_H__

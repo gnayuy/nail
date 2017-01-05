@@ -64,6 +64,24 @@ template <class Tsrc, class Tref, class Tidx>
 int computeNCC(Tsrc *src, Tref *ref, Tidx sz, double& ncc);
 
 //
+// 1D vector
+//
+
+template <class T>
+class Vec1D
+{
+public:
+    Vec1D();
+    ~Vec1D();
+public:
+    bool isNumber(const string& s);
+    int str2num(string s);
+public:
+    vector<T> numbers;
+};
+
+
+//
 /// 2d line
 //
 

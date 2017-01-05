@@ -238,6 +238,56 @@ int computeNCC(Tsrc *src, Tref *ref, Tidx sz, double& ncc)
 }
 
 //
+/// 1d vector
+//
+
+template <class T>
+Vec1D <T> :: Vec1D()
+{
+    numbers.clear();
+}
+
+template <class T>
+Vec1D <T> :: ~Vec1D()
+{
+    numbers.clear();
+}
+
+template <class T>
+bool Vec1D <T> :: isNumber(const string& s)
+{
+    string::const_iterator it = s.begin();
+    while (it != s.end() && std::isdigit(*it)) ++it;
+    return !s.empty() && it == s.end();
+}
+
+template <class T>
+int Vec1D <T> :: str2num(string s)
+{
+    istringstream ss(s);
+    string str;
+
+    while(ss >> str)
+    {
+        if(isNumber(str))
+        {
+            T num;
+            stringstream(str) >> num;
+            numbers.push_back(num);
+        }
+    }
+
+    if(numbers.empty())
+    {
+        cout<<"Invalid inputs.\n";
+        return -1;
+    }
+
+    //
+    return 0;
+}
+
+//
 /// 2d line
 //
 
