@@ -44,10 +44,12 @@ void IntensityRange::setMax(long v)
 // class ImageProcess
 ImageProcess::ImageProcess()
 {
+    m_image = new BioMedicalData();
 }
 
 ImageProcess::~ImageProcess()
 {
+    del1dp<BioMedicalData>(m_image);
 }
 
 void ImageProcess::setImage(BioMedicalData *image)
