@@ -42,6 +42,7 @@ public:
     BioMedicalData * getImage();
     void thresholding();
     void adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRange dst);
+    void gammaCorrection(double gamma, CodeType ct);
 
 public:
     BioMedicalData *m_image;
@@ -60,6 +61,7 @@ public:
 
     int adjustIntensity(string in, string out);
     int imageReadWrite(string in, string out);
+    int gammaFilter(string in, string out, double gamma, CodeType ct);
 
 public:
     ImageProcess process;

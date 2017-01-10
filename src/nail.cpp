@@ -207,6 +207,67 @@ void ImageProcess::adjustIntensity(unsigned short *&p, IntensityRange ori, Inten
     }
 }
 
+void ImageProcess::gammaCorrection(double gamma, CodeType ct)
+{
+    if(gamma<=0)
+    {
+        cout<<"gamma is less than 0\n";
+        return;
+    }
+
+    if(m_image->data())
+    {
+        switch (ct) {
+        case ENCODE:
+
+            if(m_image->dataType()==UCHAR)
+            {
+                unsigned char *p = (unsigned char *) (m_image->data());
+
+                long imgsz = m_image->size.size();
+
+                for(long i=0; i<imgsz; i++)
+                {
+                    p[i] = pow(double(p[i])/255.0, 1/gamma) * 255.0;
+                }
+            }
+            else
+            {
+
+            }
+
+            break;
+
+        case DECODE:
+
+            if(m_image->dataType()==UCHAR)
+            {
+                unsigned char *p = (unsigned char *) (m_image->data());
+
+                long imgsz = m_image->size.size();
+
+                for(long i=0; i<imgsz; i++)
+                {
+                    p[i] = pow(double(p[i])/255.0, gamma) * 255.0;
+                }
+            }
+            else
+            {
+
+            }
+
+            break;
+
+        default:
+            break;
+        }
+    }
+    else
+    {
+        cout<<"Null image\n";
+    }
+}
+
 // class Nail
 Nail::Nail()
 {
@@ -243,8 +304,6 @@ int Nail::save(string filename)
         return -1;
     }
 
-    cout<<"save image as "<<filename<<endl;
-
     //
     BioMedicalDataIO bmdata;
 
@@ -278,6 +337,21 @@ int Nail::imageReadWrite(string in, string out)
 {
     //
     load(in);
+
+    //
+    save(out);
+
+    //
+    return 0;
+}
+
+int Nail::gammaFilter(string in, string out, double gamma, CodeType ct)
+{
+    //
+    load(in);
+
+    //
+    process.gammaCorrection(gamma, ct);
 
     //
     save(out);

@@ -19,6 +19,7 @@ DEFINE_uint64(z, 1, "offset (voxels) in z axis");
 DEFINE_double(vx, 1.0, "voxel size in x axis");
 DEFINE_double(vy, 1.0, "voxel size in y axis");
 DEFINE_double(vz, 1.0, "voxel size in z axis");
+DEFINE_double(gamma, 0.5, "gamma (0.5 by default) a non-linear histogram adjustment");
 
 //
 DEFINE_bool(test, false, "test");
@@ -73,12 +74,19 @@ int main(int argc, char *argv[])
             Nail nail;
             nail.imageReadWrite(FLAGS_i, FLAGS_o);
         }
+        else if(FLAGS_f == "gammaFilter")
+        {
+            // src/nail -f gammaFilter -i <input> -o <output> -gamma 0.5
+            Nail nail;
+            nail.gammaFilter(FLAGS_i, FLAGS_o, FLAGS_gamma, ENCODE);
+        }
         else if(FLAGS_f == "help")
         {
             cout<<endl<<"nail -f <function>"<<endl;
             cout<<"function list:"<<endl;
             cout<<"\t"<<"adjustIntensity"<<endl;
             cout<<"\t"<<"imageReadWrite"<<endl;
+            cout<<"\t"<<"gammaFilter"<<endl;
             cout<<endl;
         }
         else

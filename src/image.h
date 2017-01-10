@@ -34,6 +34,7 @@ typedef enum { UNKNOWNIT, NearestNeighbor, Linear, BSpline, ThinPlateSpline } In
 typedef enum { UNKNOWNOT, GradientDescent, GaussNewton, LevenbergMarquardt, PowellDogLeg, DownhillSimplex, MRF } OptimizationType;
 typedef enum { UNKNOWNST, SSD, CC, MI } SimilarityType;
 typedef enum { UNKNOWNTD, FORWARD, INVERSE } TransformDirectionType;
+typedef enum { UNKNOWNCT, ENCODE, DECODE } CodeType;
 
 // histogram
 template<class Tdata, class Tidx>
