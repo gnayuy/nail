@@ -49,7 +49,7 @@ ImageProcess::ImageProcess()
 
 ImageProcess::~ImageProcess()
 {
-    del1dp<BioMedicalData>(m_image);
+    //del1dp<BioMedicalData>(m_image);
 }
 
 void ImageProcess::setImage(BioMedicalData *image)
