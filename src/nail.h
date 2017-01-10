@@ -13,21 +13,6 @@
 #include "image.hxx"
 
 //
-class Timer
-{
-public:
-    Timer();
-    ~Timer();
-
-public:
-    void start();
-    double getEclipseTime();
-
-private:
-    struct timeval m_startTime, m_endTime;
-};
-
-//
 class IntensityRange
 {
 public:
