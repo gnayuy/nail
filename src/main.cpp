@@ -20,6 +20,8 @@ DEFINE_double(vx, 1.0, "voxel size in x axis");
 DEFINE_double(vy, 1.0, "voxel size in y axis");
 DEFINE_double(vz, 1.0, "voxel size in z axis");
 DEFINE_double(gamma, 0.5, "gamma (0.5 by default) a non-linear histogram adjustment");
+DEFINE_string(labels, "", "input labels");
+DEFINE_bool(exclude, false, "exclude input labes?");
 
 //
 DEFINE_bool(test, false, "test");
@@ -80,6 +82,12 @@ int main(int argc, char *argv[])
             Nail nail;
             nail.gammaFilter(FLAGS_i, FLAGS_o, FLAGS_gamma, ENCODE);
         }
+        else if(FLAGS_f == "genMaskImageFromLabels")
+        {
+            // src/nail -f genMaskImageFromLabels -i <input> -o <output> -labels "4 9 43" -exclude true
+            Nail nail;
+            nail.genMaskImageFromLabels(FLAGS_i, FLAGS_o, FLAGS_labels, FLAGS_exclude);
+        }
         else if(FLAGS_f == "help")
         {
             cout<<endl<<"nail -f <function>"<<endl;
@@ -87,6 +95,7 @@ int main(int argc, char *argv[])
             cout<<"\t"<<"adjustIntensity"<<endl;
             cout<<"\t"<<"imageReadWrite"<<endl;
             cout<<"\t"<<"gammaFilter"<<endl;
+            cout<<"\t"<<"genMaskImageFromLabels"<<endl;
             cout<<endl;
         }
         else

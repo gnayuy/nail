@@ -12,6 +12,8 @@
 #include "image.h"
 #include "image.hxx"
 
+typedef Vec1D<int> IVec1D;
+
 //
 class IntensityRange
 {
@@ -43,6 +45,7 @@ public:
     void thresholding();
     void adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRange dst);
     void gammaCorrection(double gamma, CodeType ct);
+    void getImageFromLabels(IVec1D *v, bool exclude);
 
 public:
     BioMedicalData *m_image;
@@ -62,6 +65,7 @@ public:
     int adjustIntensity(string in, string out);
     int imageReadWrite(string in, string out);
     int gammaFilter(string in, string out, double gamma, CodeType ct);
+    int genMaskImageFromLabels(string in, string out, string s, bool exclude);
 
 public:
     ImageProcess process;

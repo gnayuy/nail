@@ -268,6 +268,76 @@ void ImageProcess::gammaCorrection(double gamma, CodeType ct)
     }
 }
 
+void ImageProcess::getImageFromLabels(IVec1D *v, bool exclude)
+{
+    if(m_image->data())
+    {
+        if(v->numbers.size()>0)
+        {
+            if(m_image->dataType()==UCHAR)
+            {
+                unsigned char *p = (unsigned char *) (m_image->data());
+
+                long imgsz = m_image->size.size();
+
+                if(exclude==true)
+                {
+                    for(long i=0; i<imgsz; i++)
+                    {
+                        bool found = false;
+                        for(size_t j=0; j<v->numbers.size(); j++)
+                        {
+                            if(p[i]==v->numbers[j])
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if(found==true)
+                        {
+                            p[i] = 0;
+                        }
+                        else
+                        {
+                            if(p[i] > 0)
+                                p[i] = 1;
+                        }
+                    }
+                }
+                else
+                {
+                    for(long i=0; i<imgsz; i++)
+                    {
+                        bool found = false;
+                        for(size_t j=0; j<v->numbers.size(); j++)
+                        {
+                            if(p[i]==v->numbers[j])
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if(found==true)
+                        {
+                            p[i] = 1;
+                        }
+                        else
+                        {
+                            p[i] = 0;
+                        }
+                    }
+                }
+            }
+            else
+            {
+
+            }
+        }
+    }
+}
+
 // class Nail
 Nail::Nail()
 {
@@ -352,6 +422,24 @@ int Nail::gammaFilter(string in, string out, double gamma, CodeType ct)
 
     //
     process.gammaCorrection(gamma, ct);
+
+    //
+    save(out);
+
+    //
+    return 0;
+}
+
+int Nail::genMaskImageFromLabels(string in, string out, string s, bool exclude)
+{
+    //
+    load(in);
+
+    //
+    IVec1D *v = new IVec1D();
+    v->str2num(s);
+
+    process.getImageFromLabels(v, exclude);
 
     //
     save(out);
