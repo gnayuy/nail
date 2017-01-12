@@ -15,6 +15,7 @@
 
 //
 typedef Vec1D<int> IVec1D;
+typedef Vec1D<long> LVec1D;
 typedef Vec1D<string> SVec1D;
 
 //
@@ -53,6 +54,7 @@ public:
     void add(BioMedicalData *image);
     void multiply(double v);
     void createLabelImage(BioMedicalData *image, double threshold, double label);
+    LVec1D * countVoxels(IVec1D *labels);
 
 public:
     BioMedicalData *m_image;
@@ -66,14 +68,17 @@ public:
     ~Nail();
 
 public:
+    // I/O interface
     int load(string filename);
     int save(string filename);
 
+    // image processing interface
     int adjustIntensity(string in, string out);
     int imageReadWrite(string in, string out);
     int gammaFilter(string in, string out, double gamma, CodeType ct);
     int genMaskImageFromLabels(string in, string out, string s, bool exclude);
     int genLabelImage(string in, string out);
+    int countVoxels(string in, string out, string s);
 
 public:
     ImageProcess process;

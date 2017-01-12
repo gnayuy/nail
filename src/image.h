@@ -78,6 +78,8 @@ public:
     bool isNumber(const string& s);
     int str2num(string s);
     int getFileList(string fn);
+    void zeros(long size);
+
 public:
     vector<T> items;
 };

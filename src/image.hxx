@@ -311,6 +311,15 @@ int Vec1D <T> :: getFileList(string fn)
     return 0;
 }
 
+template <class T>
+void Vec1D <T> :: zeros(long size)
+{
+    for(long i=0; i<size; i++)
+    {
+        items.push_back(0);
+    }
+}
+
 //
 /// 2d line
 //

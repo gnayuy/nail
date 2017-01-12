@@ -428,6 +428,57 @@ void ImageProcess::createLabelImage(BioMedicalData *image, double threshold, dou
     }
 }
 
+LVec1D * ImageProcess::countVoxels(IVec1D *labels)
+{
+    //
+    LVec1D *voxels = new LVec1D();
+
+    //
+    long szLabels = labels->items.size();
+
+    //
+    if(szLabels>0)
+    {
+        // init
+        voxels->zeros(szLabels);
+
+        //
+        if(m_image->data())
+        {
+            //
+            if(m_image->dataType()==UCHAR)
+            {
+                unsigned char *p = (unsigned char *) (m_image->data());
+
+                long size = m_image->size.size();
+
+                //
+                for(long i=0; i<size; i++)
+                {
+                    for(long j=0; j<szLabels; j++)
+                    {
+                        if(double(p[i]) == labels->items[j])
+                        {
+                            voxels->items[j]++;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                cout<<"unsupported data type\n";
+            }
+        }
+        else
+        {
+            cout<<"Null image\n";
+        }
+    }
+
+    //
+    return voxels;
+}
+
 // class Nail
 Nail::Nail()
 {
@@ -583,6 +634,39 @@ int Nail::genLabelImage(string in, string out)
 
     //
     save(out);
+
+    //
+    return 0;
+}
+
+int Nail::countVoxels(string in, string out, string s)
+{
+    //
+    load(in);
+
+    //
+    IVec1D *v = new IVec1D();
+    v->str2num(s);
+
+    LVec1D *voxels = process.countVoxels(v);
+
+    //
+    ofstream fout(const_cast<char*>(out.c_str()));
+    if(fout.is_open())
+    {
+        //
+        for(long i=0; i<voxels->items.size(); i++)
+        {
+            fout << voxels->items[i] << " ";
+        }
+        fout << "\n";
+    }
+    else
+    {
+        cout << "Fail to open the output file." << endl;
+        return -1;
+    }
+    fout.close();
 
     //
     return 0;
