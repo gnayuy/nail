@@ -244,13 +244,13 @@ int computeNCC(Tsrc *src, Tref *ref, Tidx sz, double& ncc)
 template <class T>
 Vec1D <T> :: Vec1D()
 {
-    numbers.clear();
+    items.clear();
 }
 
 template <class T>
 Vec1D <T> :: ~Vec1D()
 {
-    numbers.clear();
+    items.clear();
 }
 
 template <class T>
@@ -273,13 +273,37 @@ int Vec1D <T> :: str2num(string s)
         {
             T num;
             stringstream(str) >> num;
-            numbers.push_back(num);
+            items.push_back(num);
         }
     }
 
-    if(numbers.empty())
+    if(items.empty())
     {
         cout<<"Invalid inputs.\n";
+        return -1;
+    }
+
+    //
+    return 0;
+}
+
+template <class T>
+int Vec1D <T> :: getFileList(string fn)
+{
+    string str;
+    ifstream fin(const_cast<char*>(fn.c_str()));
+
+    if(fin.is_open())
+    {
+        while( getline(fin, str) )
+        {
+            items.push_back(str);
+        }
+        fin.close();
+    }
+    else
+    {
+        cout << "Fail to open the input file list." << endl;
         return -1;
     }
 

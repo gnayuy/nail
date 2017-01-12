@@ -272,7 +272,7 @@ void ImageProcess::getImageFromLabels(IVec1D *v, bool exclude)
 {
     if(m_image->data())
     {
-        if(v->numbers.size()>0)
+        if(v->items.size()>0)
         {
             if(m_image->dataType()==UCHAR)
             {
@@ -285,9 +285,9 @@ void ImageProcess::getImageFromLabels(IVec1D *v, bool exclude)
                     for(long i=0; i<imgsz; i++)
                     {
                         bool found = false;
-                        for(size_t j=0; j<v->numbers.size(); j++)
+                        for(size_t j=0; j<v->items.size(); j++)
                         {
-                            if(p[i]==v->numbers[j])
+                            if(p[i]==v->items[j])
                             {
                                 found = true;
                                 break;
@@ -310,9 +310,9 @@ void ImageProcess::getImageFromLabels(IVec1D *v, bool exclude)
                     for(long i=0; i<imgsz; i++)
                     {
                         bool found = false;
-                        for(size_t j=0; j<v->numbers.size(); j++)
+                        for(size_t j=0; j<v->items.size(); j++)
                         {
-                            if(p[i]==v->numbers[j])
+                            if(p[i]==v->items[j])
                             {
                                 found = true;
                                 break;
@@ -335,6 +335,96 @@ void ImageProcess::getImageFromLabels(IVec1D *v, bool exclude)
 
             }
         }
+    }
+}
+
+void ImageProcess::im2bw(double threshold, double v)
+{
+    if(m_image->data())
+    {
+        if(m_image->dataType()==UCHAR)
+        {
+            unsigned char *p = (unsigned char *) (m_image->data());
+
+            long imgsz = m_image->size.size();
+
+            for(long i=0; i<imgsz; i++)
+            {
+                if(double(p[i])>=threshold)
+                    p[i] = (unsigned char)v;
+                else
+                    p[i] = 0;
+            }
+        }
+        else
+        {
+            cout<<"unsupported data type\n";
+            return;
+        }
+    }
+    else
+    {
+        cout<<"Null image\n";
+        return;
+    }
+}
+
+void ImageProcess::add(BioMedicalData *image)
+{
+
+}
+
+void ImageProcess::multiply(double v)
+{
+
+}
+
+void ImageProcess::createLabelImage(BioMedicalData *image, double threshold, double label)
+{
+    if(m_image->data() && image->data())
+    {
+        if(m_image->dataType()==UCHAR && image->dataType()==UCHAR)
+        {
+            unsigned char *p1 = (unsigned char *) (m_image->data());
+            unsigned char *p2 = (unsigned char *) (image->data());
+
+            long size1 = m_image->size.size();
+            long size2 = image->size.size();
+
+            if(size1!=size2)
+            {
+                cout<<"image size does not match\n";
+                return;
+            }
+
+            // assume m_image is binary image
+            // im2bw image and assign label to m_image
+            for(long i=0; i<size1; i++)
+            {
+                if(double(p2[i])>=threshold)
+                {
+                    if(p1[i]>0)
+                    {
+                        p1[i] = 1;
+                    }
+                    else
+                    {
+                        p1[i] = (unsigned char)label;
+                    }
+                }
+            }
+        }
+        else
+        {
+            cout<<"unsupported data type\n";
+            return;
+        }
+
+    }
+    else
+    {
+        cout<<"Null image\n";
+        return;
     }
 }
 
@@ -440,6 +530,56 @@ int Nail::genMaskImageFromLabels(string in, string out, string s, bool exclude)
     v->str2num(s);
 
     process.getImageFromLabels(v, exclude);
+
+    //
+    save(out);
+
+    //
+    return 0;
+}
+
+int Nail::genLabelImage(string in, string out)
+{
+    //
+    SVec1D *v = new SVec1D();
+    v->getFileList(in);
+
+    //
+    long size = v->items.size();
+
+    //
+    for(long i=0; i<size; i++)
+    {
+        string fn = v->items[i];
+
+        cout<<"processing image "<<i<<" "<<fn<<endl;
+
+        //
+        BioMedicalDataIO bmdata;
+
+        if(bmdata.readData(fn)!=0)
+        {
+            cout<<"Fail to read data!"<<endl;
+            return -1;
+        }
+
+        cout<<"test ... "<<bmdata.data()->size.getX()<<" "<<bmdata.data()->size.getY()<<" "<<bmdata.data()->size.getZ()<<endl;
+
+        if(i==0)
+        {
+            process.setImage(bmdata.data());
+
+            cout<<"test ... 1 "<<process.m_image->size.getX()<<" "<<process.m_image->size.getY()<<" "<<process.m_image->size.getZ()<<endl;
+
+            process.im2bw(1, 2);
+
+            cout<<"test ... 2 "<<process.m_image->size.getX()<<" "<<process.m_image->size.getY()<<" "<<process.m_image->size.getZ()<<endl;
+        }
+        else
+        {
+            process.createLabelImage(bmdata.data(), 1, i+2);
+        }
+    }
 
     //
     save(out);

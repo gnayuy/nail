@@ -5,6 +5,7 @@
 #ifndef __NAIL_H__
 #define __NAIL_H__
 
+//
 #include <sys/time.h>
 #include <gflags/gflags.h>
 
@@ -12,7 +13,9 @@
 #include "image.h"
 #include "image.hxx"
 
+//
 typedef Vec1D<int> IVec1D;
+typedef Vec1D<string> SVec1D;
 
 //
 class IntensityRange
@@ -46,6 +49,10 @@ public:
     void adjustIntensity(unsigned short *&p, IntensityRange ori, IntensityRange dst);
     void gammaCorrection(double gamma, CodeType ct);
     void getImageFromLabels(IVec1D *v, bool exclude);
+    void im2bw(double threshold, double v);
+    void add(BioMedicalData *image);
+    void multiply(double v);
+    void createLabelImage(BioMedicalData *image, double threshold, double label);
 
 public:
     BioMedicalData *m_image;
@@ -66,6 +73,7 @@ public:
     int imageReadWrite(string in, string out);
     int gammaFilter(string in, string out, double gamma, CodeType ct);
     int genMaskImageFromLabels(string in, string out, string s, bool exclude);
+    int genLabelImage(string in, string out);
 
 public:
     ImageProcess process;

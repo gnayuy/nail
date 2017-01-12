@@ -77,8 +77,9 @@ public:
 public:
     bool isNumber(const string& s);
     int str2num(string s);
+    int getFileList(string fn);
 public:
-    vector<T> numbers;
+    vector<T> items;
 };
 
 

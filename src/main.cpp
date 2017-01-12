@@ -88,6 +88,12 @@ int main(int argc, char *argv[])
             Nail nail;
             nail.genMaskImageFromLabels(FLAGS_i, FLAGS_o, FLAGS_labels, FLAGS_exclude);
         }
+        else if(FLAGS_f == "genLabelImage")
+        {
+            // src/nail -f genLabelImage -i <input> -o <output>
+            Nail nail;
+            nail.genLabelImage(FLAGS_i, FLAGS_o);
+        }
         else if(FLAGS_f == "help")
         {
             cout<<endl<<"nail -f <function>"<<endl;
@@ -96,6 +102,7 @@ int main(int argc, char *argv[])
             cout<<"\t"<<"imageReadWrite"<<endl;
             cout<<"\t"<<"gammaFilter"<<endl;
             cout<<"\t"<<"genMaskImageFromLabels"<<endl;
+            cout<<"\t"<<"genLabelImage"<<endl;
             cout<<endl;
         }
         else
