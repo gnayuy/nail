@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
 {
     //
     gflags::SetUsageMessage("nail -f <func> -i <input> -o <output>");
+    gflags::SetVersionString(string("0.1.1 "));
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     
     //
