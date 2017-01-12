@@ -20,7 +20,7 @@ DEFINE_double(vx, 1.0, "voxel size in x axis");
 DEFINE_double(vy, 1.0, "voxel size in y axis");
 DEFINE_double(vz, 1.0, "voxel size in z axis");
 DEFINE_double(gamma, 0.5, "gamma (0.5 by default) a non-linear histogram adjustment");
-DEFINE_string(labels, "", "input labels");
+DEFINE_string(s, "", "a string (e.g. labels, ...)");
 DEFINE_bool(exclude, false, "exclude input labes?");
 
 //
@@ -85,15 +85,21 @@ int main(int argc, char *argv[])
         }
         else if(FLAGS_f == "genMaskImageFromLabels")
         {
-            // src/nail -f genMaskImageFromLabels -i <input> -o <output> -labels "4 9 43" -exclude true
+            // src/nail -f genMaskImageFromLabels -i <input> -o <output> -s "4 9 43" -exclude true
             Nail nail;
-            nail.genMaskImageFromLabels(FLAGS_i, FLAGS_o, FLAGS_labels, FLAGS_exclude);
+            nail.genMaskImageFromLabels(FLAGS_i, FLAGS_o, FLAGS_s, FLAGS_exclude);
         }
         else if(FLAGS_f == "genLabelImage")
         {
             // src/nail -f genLabelImage -i <input> -o <output>
             Nail nail;
             nail.genLabelImage(FLAGS_i, FLAGS_o);
+        }
+        else if(FLAGS_f == "countVoxels")
+        {
+            // src/nail -f countVoxels -i <input> -o <output> -s "1"
+            Nail nail;
+            nail.countVoxels(FLAGS_i, FLAGS_o, FLAGS_s);
         }
         else if(FLAGS_f == "help")
         {
@@ -104,6 +110,7 @@ int main(int argc, char *argv[])
             cout<<"\t"<<"gammaFilter"<<endl;
             cout<<"\t"<<"genMaskImageFromLabels"<<endl;
             cout<<"\t"<<"genLabelImage"<<endl;
+            cout<<"\t"<<"countVoxels"<<endl;
             cout<<endl;
         }
         else
