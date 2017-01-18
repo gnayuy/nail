@@ -80,7 +80,89 @@ void ImageProcess::thresholding()
     pagesz=m_image->size.size();
 
     //
-    if(m_image->dataType()==USHORT)
+    if(m_image->dataType()==UCHAR)
+    {
+        //
+        unsigned char *data = (unsigned char *)(m_image->data());
+
+        //
+        long BINS = 256; // histogram bins
+
+        long *h=NULL, *hc=NULL;
+        new1dp<long, long>(h, BINS);
+        new1dp<long, long>(hc, BINS);
+
+        memset(h, 0, sizeof(long)*BINS);
+
+        // histogram
+        HistogramLUT<unsigned char, long> hlut;
+        hlut.initLUT(data, pagesz, BINS);
+        foreach(pagesz, i)
+        {
+            h[hlut.getIndex(data[i])] ++;
+        }
+
+        // heuristic init center
+        float mub=0.05*(hlut.maxv - hlut.minv) + hlut.minv;
+        float muf=0.30*(hlut.maxv - hlut.minv) + hlut.minv;
+
+        //
+        while (true)
+        {
+            float oldmub=mub, oldmuf=muf;
+
+            for(long i=0; i<BINS; i++)
+            {
+                if(h[i]==0)
+                    continue;
+
+                float cb = y_abs<float>(float(hlut.lut[i])-mub);
+                float cf = y_abs<float>(float(hlut.lut[i])-muf);
+
+                hc[i] = (cb<=cf)?1:2; // class 1 and class 2
+            }
+
+            // update centers
+            float sum_b=0, sum_bw=0, sum_f=0, sum_fw=0;
+
+            for(long i=0; i<BINS; i++)
+            {
+                if(h[i]==0)
+                    continue;
+
+                if(hc[i]==1)
+                {
+                    sum_bw += (i+1)*h[i];
+                    sum_b += h[i];
+                }
+                else if(hc[i]==2)
+                {
+                    sum_fw += (i+1)*h[i];
+                    sum_f += h[i];
+                }
+            }
+
+            mub = hlut.lut[ long(sum_bw/sum_b) ];
+            muf = hlut.lut[ long(sum_fw/sum_f) ];
+
+            if(y_abs<float>(mub - oldmub)<1 && y_abs<float>(muf - oldmuf)<1)  break;
+        }
+
+        //
+        unsigned short threshold = (mub+muf)/2;
+        for(long i=0; i<pagesz; i++)
+        {
+            if(data[i]>threshold)
+                data[i] = hlut.maxv;
+            else
+                data[i] = hlut.minv;
+        }
+
+        //
+        del1dp<long>(h);
+        del1dp<long>(hc);
+    }
+    else if(m_image->dataType()==USHORT)
     {
         //
         unsigned short *data = (unsigned short *)(m_image->data());
@@ -164,7 +246,7 @@ void ImageProcess::thresholding()
     }
     else
     {
-
+        cout<<"Unsupported data type in thresholding"<<endl;
     }
 
     //
@@ -479,6 +561,55 @@ LVec1D * ImageProcess::countVoxels(IVec1D *labels)
     return voxels;
 }
 
+LVec1D * ImageProcess::countVoxels(BioMedicalData *mask, int nLabels)
+{
+    //
+    LVec1D *voxels = new LVec1D();
+
+    //
+    if(nLabels>0)
+    {
+        // init
+        voxels->zeros(nLabels);
+
+        //
+        if(m_image->data() && mask->data())
+        {
+            //
+            if(m_image->dataType()==UCHAR && mask->dataType()==UCHAR)
+            {
+                unsigned char *p = (unsigned char *) (m_image->data());
+                unsigned char *pMask = (unsigned char *) (mask->data());
+
+                long size = m_image->size.size();
+
+                //
+                for(long i=0; i<size; i++)
+                {
+                    for(long j=0; j<nLabels; j++)
+                    {
+                        if(pMask[i]==j+1 && p[i]>0)
+                        {
+                            voxels->items[j]++;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                cout<<"unsupported data type\n";
+            }
+        }
+        else
+        {
+            cout<<"Null image\n";
+        }
+    }
+
+    //
+    return voxels;
+}
+
 // class Nail
 Nail::Nail()
 {
@@ -639,16 +770,37 @@ int Nail::genLabelImage(string in, string out)
     return 0;
 }
 
-int Nail::countVoxels(string in, string out, string s)
+int Nail::countVoxels(string in, string out, string s, bool withMask, int nLabels)
 {
     //
     load(in);
 
     //
-    IVec1D *v = new IVec1D();
-    v->str2num(s);
+    LVec1D *voxels;
 
-    LVec1D *voxels = process.countVoxels(v);
+    if(withMask==true)
+    {
+        //
+        BioMedicalDataIO bmdata;
+
+        if(bmdata.readData(s)!=0)
+        {
+            cout<<"Fail to read data!"<<endl;
+            return -1;
+        }
+
+        //
+        voxels = process.countVoxels(bmdata.data(), nLabels);
+    }
+    else
+    {
+        //
+        IVec1D *v = new IVec1D();
+        v->str2num(s);
+
+        //
+        voxels = process.countVoxels(v);
+    }
 
     //
     ofstream fout(const_cast<char*>(out.c_str()));
@@ -657,9 +809,8 @@ int Nail::countVoxels(string in, string out, string s)
         //
         for(long i=0; i<voxels->items.size(); i++)
         {
-            fout << voxels->items[i] << " ";
+            fout << i+1 << ": " << voxels->items[i] << endl;
         }
-        fout << "\n";
     }
     else
     {
@@ -667,6 +818,21 @@ int Nail::countVoxels(string in, string out, string s)
         return -1;
     }
     fout.close();
+
+    //
+    return 0;
+}
+
+int Nail::binarize(string in, string out)
+{
+    //
+    load(in);
+
+    //
+    process.thresholding();
+
+    //
+    save(out);
 
     //
     return 0;

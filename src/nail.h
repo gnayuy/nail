@@ -55,6 +55,8 @@ public:
     void multiply(double v);
     void createLabelImage(BioMedicalData *image, double threshold, double label);
     LVec1D * countVoxels(IVec1D *labels);
+    LVec1D * countVoxels(BioMedicalData *mask, int nLabels);
+
 
 public:
     BioMedicalData *m_image;
@@ -78,7 +80,8 @@ public:
     int gammaFilter(string in, string out, double gamma, CodeType ct);
     int genMaskImageFromLabels(string in, string out, string s, bool exclude);
     int genLabelImage(string in, string out);
-    int countVoxels(string in, string out, string s);
+    int countVoxels(string in, string out, string s, bool withMask=false, int nLabels=1);
+    int binarize(string in, string out);
 
 public:
     ImageProcess process;
