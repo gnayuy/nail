@@ -6,8 +6,9 @@
 
 // CLI
 DEFINE_string(f, "", "specify which function to call");
-DEFINE_string(i, "", "input TIFF file name (.tif)");
-DEFINE_string(o, "", "output TIFF file name (.tif)");
+DEFINE_string(i, "", "input");
+DEFINE_string(o, "", "output");
+DEFINE_string(r, "", "reference");
 DEFINE_uint64(sx, 1, "size (voxels) in x axis");
 DEFINE_uint64(sy, 1, "size (voxels) in y axis");
 DEFINE_uint64(sz, 1, "size (voxels) in z axis");
@@ -24,7 +25,7 @@ DEFINE_string(s, "", "a string (e.g. labels, masks, ...)");
 DEFINE_bool(exclude, false, "exclude input labes?");
 DEFINE_bool(withMask, false, "input a mask image?");
 DEFINE_uint64(n, 1, "the number of ...");
-
+DEFINE_uint32(similarity, 2, "similarity metric (NCC=2, NMI=3, ...)");
 
 //
 DEFINE_bool(test, false, "test");
@@ -111,6 +112,12 @@ int main(int argc, char *argv[])
             Nail nail;
             nail.binarize(FLAGS_i, FLAGS_o);
         }
+        else if(FLAGS_f == "imageCompare")
+        {
+            // nail -f imageCompare -i <input> -o <output> -r <reference> -similarity <similarity_metric>
+            Nail nail;
+            nail.imageCompare(FLAGS_i, FLAGS_o, FLAGS_r, (SimilarityType)(FLAGS_similarity));
+        }
         else if(FLAGS_f == "help")
         {
             cout<<endl<<"nail -f <function>"<<endl;
@@ -122,6 +129,7 @@ int main(int argc, char *argv[])
             cout<<"\t"<<"genLabelImage"<<endl;
             cout<<"\t"<<"countVoxels"<<endl;
             cout<<"\t"<<"binarize"<<endl;
+            cout<<"\t"<<"imageCompare"<<endl;
             cout<<endl;
         }
         else

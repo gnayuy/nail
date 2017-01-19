@@ -56,6 +56,7 @@ public:
     void createLabelImage(BioMedicalData *image, double threshold, double label);
     LVec1D * countVoxels(IVec1D *labels);
     LVec1D * countVoxels(BioMedicalData *mask, int nLabels);
+    double imageCompare(BioMedicalData *reference, SimilarityType similarity);
 
 public:
     BioMedicalData *m_image;
@@ -81,6 +82,7 @@ public:
     int genLabelImage(string in, string out);
     int countVoxels(string in, string out, string s, bool withMask=false, int nLabels=1);
     int binarize(string in, string out);
+    int imageCompare(string in, string out, string ref, SimilarityType similarity);
 
 public:
     ImageProcess process;

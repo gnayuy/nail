@@ -602,12 +602,61 @@ LVec1D * ImageProcess::countVoxels(BioMedicalData *mask, int nLabels)
         }
         else
         {
-            cout<<"Null image\n";
+            cout<<"Null data\n";
         }
     }
 
     //
     return voxels;
+}
+
+double ImageProcess::imageCompare(BioMedicalData *reference, SimilarityType similarity)
+{
+    double metric = -1;
+
+    if(m_image->data() && reference->data())
+    {
+        //
+        if(m_image->dataType()==UCHAR && reference->dataType()==UCHAR)
+        {
+            unsigned char *p = (unsigned char *)(m_image->data());
+            unsigned char *pRef = (unsigned char *)(reference->data());
+
+            long size = m_image->size.size();
+            long sizeRef = reference->size.size();
+
+            if(size!=sizeRef)
+            {
+                cout<<"Sizes do not match.\n";
+                return metric;
+            }
+
+            //
+            if(similarity==CC)
+            {
+                computeNCC<unsigned char, unsigned char, long>(p, pRef, size, metric);
+            }
+            else if(similarity==MI)
+            {
+                computeNMI<unsigned char, unsigned char, long>(p, pRef, size, 256, metric);
+            }
+            else
+            {
+                cout<<"Unsupported similarity.\n";
+            }
+        }
+        else
+        {
+            cout<<"Unsupported data type.\n";
+        }
+    }
+    else
+    {
+        cout<<"Null data.\n";
+    }
+
+    //
+    return metric;
 }
 
 // class Nail
@@ -833,6 +882,41 @@ int Nail::binarize(string in, string out)
 
     //
     save(out);
+
+    //
+    return 0;
+}
+
+int Nail::imageCompare(string in, string out, string ref, SimilarityType similarity)
+{
+    //
+    load(in);
+
+    //
+    BioMedicalDataIO bmdata;
+
+    if(bmdata.readData(ref)!=0)
+    {
+        cout<<"Fail to read data!"<<endl;
+        return -1;
+    }
+
+    //
+    double metricVal = process.imageCompare(bmdata.data(), similarity);
+
+    //
+    ofstream fout(const_cast<char*>(out.c_str()));
+    if(fout.is_open())
+    {
+        //
+        fout << metricVal << endl;
+    }
+    else
+    {
+        cout << "Fail to open the output file." << endl;
+        return -1;
+    }
+    fout.close();
 
     //
     return 0;
