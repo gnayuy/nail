@@ -424,7 +424,7 @@ int findOptimalPath(Tdata *p, Tidx x, Tdata minY0, Tdata maxY0, Tdata minY, Tdat
 }
 
 template <class Tdata, class Tidx>
-int reconstructStack(Tdata *slices, Tidx n, Tdata *&stack, Tidx x, Tidx y, Tidx z, Tdata k, Tdata b)
+int reconstructStack(Tdata *slices, Tidx n, Tdata *&stack, Tidx x, Tidx y, Tidx z, double k, double b)
 {
     //
     if(n<1)
@@ -476,7 +476,6 @@ int reconstructStack(Tdata *slices, Tidx n, Tdata *&stack, Tidx x, Tidx y, Tidx 
         {
             stack[offstack + j] = slices[offslices + j];
         }
-
     }
 
     //

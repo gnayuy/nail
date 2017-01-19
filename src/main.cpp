@@ -26,6 +26,8 @@ DEFINE_bool(exclude, false, "exclude input labes?");
 DEFINE_bool(withMask, false, "input a mask image?");
 DEFINE_uint64(n, 1, "the number of ...");
 DEFINE_uint32(similarity, 2, "similarity metric (NCC=2, NMI=3, ...)");
+DEFINE_double(k, 1.0, "slope");
+DEFINE_double(b, 0.0, "intercept");
 
 //
 DEFINE_bool(test, false, "test");
@@ -101,9 +103,15 @@ int main(int argc, char *argv[])
         }
         else if(FLAGS_f == "imageCompare")
         {
-            // nail -f imageCompare -i <input> -o <output> -r <reference> -similarity <similarity_metric>
+            // nail -f imageCompare -i <input> -o <output> -r <reference> -similarity <similarity-metric>
             Nail nail;
             nail.imageCompare(FLAGS_i, FLAGS_o, FLAGS_r, (SimilarityType)(FLAGS_similarity));
+        }
+        else if(FLAGS_f == "constructStack")
+        {
+            // nail -f constructStack -i <input> -o <output> -sz <z-dimension> -k <slope> -b <intercept>
+            Nail nail;
+            nail.constructStack(FLAGS_i, FLAGS_o, FLAGS_sz, FLAGS_k, FLAGS_b);
         }
         else if(FLAGS_f == "help")
         {
@@ -117,6 +125,7 @@ int main(int argc, char *argv[])
             cout<<"\t"<<"countVoxels"<<endl;
             cout<<"\t"<<"binarize"<<endl;
             cout<<"\t"<<"imageCompare"<<endl;
+            cout<<"\t"<<"constructStack"<<endl;
             cout<<endl;
         }
         else

@@ -922,3 +922,44 @@ int Nail::imageCompare(string in, string out, string ref, SimilarityType similar
     return 0;
 }
 
+int Nail::constructStack(string in, string out, long z, double k, double b)
+{
+    // load slices
+    BioMedicalDataIO slices;
+
+    if(slices.readData(in)!=0)
+    {
+        cout<<"Fail to read data!"<<endl;
+        return -1;
+    }
+
+    //
+    long x = slices.data()->size.getX();
+    long y = slices.data()->size.getY();
+    long n = slices.data()->size.getZ();
+
+    //
+    BioMedicalData *stack = new BioMedicalData();
+    stack->setDataType(slices.data()->dataType());
+    stack->size.setXYZCT(x,y,z,1,1);
+    stack->zeros();
+
+    //
+    if(slices.data()->dataType()==UCHAR)
+    {
+        unsigned char *p = (unsigned char *)(slices.data());
+        unsigned char *pStack = (unsigned char *)(stack->data());
+
+        reconstructStack<unsigned char, long>(p, n, pStack, x, y, z, k, b);
+    }
+
+    //
+    process.setImage(stack);
+
+    //
+    save(out);
+
+    //
+    return 0;
+}
+
