@@ -57,7 +57,6 @@ public:
     LVec1D * countVoxels(IVec1D *labels);
     LVec1D * countVoxels(BioMedicalData *mask, int nLabels);
 
-
 public:
     BioMedicalData *m_image;
 };

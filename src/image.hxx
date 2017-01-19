@@ -427,9 +427,9 @@ template <class Tdata, class Tidx>
 int reconstructStack(Tdata *slices, Tidx n, Tdata *&stack, Tidx x, Tidx y, Tidx z, Tdata k, Tdata b)
 {
     //
-    if(n<=1)
+    if(n<1)
     {
-        cout<<"Need n>1 slices!\n";
+        cout<<"Need n>=1 slices!\n";
         return -1;
     }
 
