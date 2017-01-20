@@ -363,20 +363,19 @@ void Line2D <T> :: score(T score)
 }
 
 template <class Tdata, class Tidx>
-int findOptimalPath(Tdata *p, Tidx x, Tdata minY0, Tdata maxY0, Tdata minY, Tdata maxY, Tdata &k, Tdata &b)
+int getOptimalPath(Tdata *p, Tidx x, Tdata minY0, Tdata maxY0, Tdata minY, Tdata maxY, Tdata &k, Tdata &b)
 {
     Tidx i,j;
-    Tdata x0, x1, y0, y1;
-    Tdata sum;
+    Tdata y, sum;
 
     Tidx NBESTLINES = 5;
     vector< Line2D<Tdata> > linelist;
 
     for(b=minY0; b<=maxY0; b++)
     {
-        for(y1=minY; y1<=maxY; y1++)
+        for(y=minY; y<=maxY; y++)
         {
-            k = (y1 - b)/x;
+            k = (y - b)/x;
 
             sum = 0;
             for(i=0; i<=x; i++)

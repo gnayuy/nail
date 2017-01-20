@@ -6,28 +6,39 @@
 
 // CLI
 DEFINE_string(f, "", "specify which function to call");
+
 DEFINE_string(i, "", "input");
 DEFINE_string(o, "", "output");
-DEFINE_string(r, "", "reference");
+DEFINE_string(ref, "", "reference");
+
 DEFINE_uint64(sx, 1, "size (voxels) in x axis");
 DEFINE_uint64(sy, 1, "size (voxels) in y axis");
 DEFINE_uint64(sz, 1, "size (voxels) in z axis");
 DEFINE_uint64(sc, 1, "the number of color channels");
 DEFINE_uint64(st, 1, "the number of time frames");
+
 DEFINE_uint64(x, 1, "offset (voxels) in x axis");
 DEFINE_uint64(y, 1, "offset (voxels) in y axis");
 DEFINE_uint64(z, 1, "offset (voxels) in z axis");
+
 DEFINE_double(vx, 1.0, "voxel size in x axis");
 DEFINE_double(vy, 1.0, "voxel size in y axis");
 DEFINE_double(vz, 1.0, "voxel size in z axis");
+
 DEFINE_double(gamma, 0.5, "gamma (0.5 by default) a non-linear histogram adjustment");
 DEFINE_string(s, "", "a string (e.g. labels, masks, ...)");
 DEFINE_bool(exclude, false, "exclude input labes?");
 DEFINE_bool(withMask, false, "input a mask image?");
 DEFINE_uint64(n, 1, "the number of ...");
 DEFINE_uint32(similarity, 2, "similarity metric (NCC=2, NMI=3, ...)");
+
 DEFINE_double(k, 1.0, "slope");
 DEFINE_double(b, 0.0, "intercept");
+
+DEFINE_double(l, 0.0, "x0");
+DEFINE_double(r, 0.0, "x1");
+DEFINE_double(d, 0.0, "y0");
+DEFINE_double(u, 0.0, "y1");
 
 //
 DEFINE_bool(test, false, "test");
@@ -103,15 +114,21 @@ int main(int argc, char *argv[])
         }
         else if(FLAGS_f == "imageCompare")
         {
-            // nail -f imageCompare -i <input> -o <output> -r <reference> -similarity <similarity-metric>
+            // nail -f imageCompare -i <input> -o <output> -ref <reference> -similarity <similarity-metric>
             Nail nail;
-            nail.imageCompare(FLAGS_i, FLAGS_o, FLAGS_r, (SimilarityType)(FLAGS_similarity));
+            nail.imageCompare(FLAGS_i, FLAGS_o, FLAGS_ref, (SimilarityType)(FLAGS_similarity));
         }
         else if(FLAGS_f == "constructStack")
         {
             // nail -f constructStack -i <input> -o <output> -sz <z-dimension> -k <slope> -b <intercept>
             Nail nail;
             nail.constructStack(FLAGS_i, FLAGS_o, FLAGS_sz, FLAGS_k, FLAGS_b);
+        }
+        else if(FLAGS_f == "findOptimalPath")
+        {
+            // nail -f findOptimalPath -i <input> -o <output> -l <minY0> -r <maxY0> -d <minY> -u <maxY> -sx <x-dimension> -sy <y-dimension>
+            Nail nail;
+            nail.findOptimalPath(FLAGS_i, FLAGS_o, FLAGS_sx, FLAGS_sy, FLAGS_l, FLAGS_r, FLAGS_d, FLAGS_u);
         }
         else if(FLAGS_f == "help")
         {
@@ -126,6 +143,7 @@ int main(int argc, char *argv[])
             cout<<"\t"<<"binarize"<<endl;
             cout<<"\t"<<"imageCompare"<<endl;
             cout<<"\t"<<"constructStack"<<endl;
+            cout<<"\t"<<"findOptimalPath"<<endl;
             cout<<endl;
         }
         else

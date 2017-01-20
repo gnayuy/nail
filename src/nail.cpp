@@ -963,3 +963,33 @@ int Nail::constructStack(string in, string out, long z, double k, double b)
     return 0;
 }
 
+int Nail::findOptimalPath(string in, string out, long sx, long sy, double minY0, double maxY0, double minY, double maxY)
+{
+    // load raw data (2D array)
+    BioMedicalDataIO dpm;
+    dpm.data()->size.setX(sx);
+    dpm.data()->size.setY(sy);
+    dpm.data()->setDataType(FLOAT);
+
+    if(dpm.readData(in)!=0)
+    {
+        cout<<"Fail to read data!"<<endl;
+        return -1;
+    }
+
+    // calculate the slope and intercept of the line equation (optimal path of dp matrix)
+    float k, b;
+    getOptimalPath<float, long>((float*)(dpm.data()), sx, minY0, maxY0, minY, maxY, k, b);
+
+    //
+    cout<<"k "<<k<<" \nb "<<b<<endl;
+
+    for(long i=0; i<sx; i++)
+    {
+        cout<<i<<" "<<k*i+b<<endl;
+    }
+
+    //
+    return 0;
+}
+
