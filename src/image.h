@@ -24,6 +24,11 @@
 //#include <codecvt>
 using namespace std;
 
+//#define EIGEN_DONT_ALIGN 1
+#define EIGEN_DONT_VECTORIZE 1
+#include <Eigen/Eigen>
+using namespace Eigen;
+
 #ifndef EPSILON
 #define EPSILON 1E-10
 #endif
@@ -54,16 +59,6 @@ public:
     double minv, maxv;
 };
 
-/// similarity measures
-
-// normalized mutual information
-template <class Tsrc, class Tref, class Tidx>
-int computeNMI(Tsrc *src, Tref *ref, Tidx sz, Tidx nbin, double& nmi);
-
-// normalized cross correlation
-template <class Tsrc, class Tref, class Tidx>
-int computeNCC(Tsrc *src, Tref *ref, Tidx sz, double& ncc);
-
 //
 // 1D vector
 //
@@ -83,7 +78,6 @@ public:
 public:
     vector<T> items;
 };
-
 
 //
 /// 2d line
@@ -106,9 +100,29 @@ public:
     T k, b, s;
 };
 
+//
+/// functions
+//
+
+/// similarity measures
+
+// normalized mutual information
+template <class Tsrc, class Tref, class Tidx>
+int computeNMI(Tsrc *src, Tref *ref, Tidx sz, Tidx nbin, double& nmi);
+
+// normalized cross correlation
+template <class Tsrc, class Tref, class Tidx>
+int computeNCC(Tsrc *src, Tref *ref, Tidx sz, double& ncc);
+
+/// dynamic programming
+
+//
 template <class Tdata, class Tidx>
 int getOptimalPath(Tdata *p, Tidx x, Tdata minY0, Tdata maxY0, Tdata minY, Tdata maxY, Tdata &k, Tdata &b);
 
+/// 3D stack reconstruction from 2D slices
+
+//
 template <class Tdata, class Tidx>
 int reconstructStack(Tdata *slices, Tidx n, Tdata *&stack, Tidx x, Tidx y, Tidx z, double k, double b);
 

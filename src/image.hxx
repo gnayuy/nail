@@ -428,13 +428,19 @@ int reconstructStack(Tdata *slices, Tidx n, Tdata *&stack, Tidx x, Tidx y, Tidx 
     //
     if(n<1)
     {
-        cout<<"Need n>=1 slices!\n";
+        cout<<"Need n>=1 slices.\n";
         return -1;
     }
 
     if(slices==NULL)
     {
-        cout<<"Invalid slices!\n";
+        cout<<"Invalid slices.\n";
+        return -1;
+    }
+
+    if(z<n)
+    {
+        cout<<"Need z>=n.\n";
         return -1;
     }
 
@@ -474,7 +480,10 @@ int reconstructStack(Tdata *slices, Tidx n, Tdata *&stack, Tidx x, Tidx y, Tidx 
         for(Tidx j=0; j<pagesz; j++)
         {
             stack[offstack + j] = slices[offslices + j];
+
+            //cout<<stack[offstack + j]<<"="<<slices[offslices + j]<<" "<<offstack + j<<" "<<offslices + j<<endl;
         }
+        cout<<endl;
     }
 
     //

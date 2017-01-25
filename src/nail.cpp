@@ -944,13 +944,41 @@ int Nail::constructStack(string in, string out, long z, double k, double b)
     stack->size.setXYZCT(x,y,z,1,1);
     stack->zeros();
 
+    cout<<"datatype ... "<<UCHAR<<endl;
+
     //
     if(slices.data()->dataType()==UCHAR)
     {
-        unsigned char *p = (unsigned char *)(slices.data());
+        unsigned char *p = (unsigned char *)(slices.data()->data());
         unsigned char *pStack = (unsigned char *)(stack->data());
 
         reconstructStack<unsigned char, long>(p, n, pStack, x, y, z, k, b);
+    }
+    else if(slices.data()->dataType()==CHAR)
+    {
+        char *p = (char *)(slices.data()->data());
+        char *pStack = (char *)(stack->data());
+
+        reconstructStack<char, long>(p, n, pStack, x, y, z, k, b);
+    }
+    else if(slices.data()->dataType()==USHORT)
+    {
+        unsigned short *p = (unsigned short *)(slices.data()->data());
+        unsigned short *pStack = (unsigned short *)(stack->data());
+
+        reconstructStack<unsigned short, long>(p, n, pStack, x, y, z, k, b);
+    }
+    else if(slices.data()->dataType()==SHORT)
+    {
+        short *p = (short *)(slices.data()->data());
+        short *pStack = (short *)(stack->data());
+
+        reconstructStack<short, long>(p, n, pStack, x, y, z, k, b);
+    }
+    else
+    {
+        cout<<"Unsupported datatype "<<slices.data()->dataType()<<endl;
+        return -1;
     }
 
     //
