@@ -71,62 +71,62 @@ int main(int argc, char *argv[])
         //
         if(FLAGS_f == "adjustIntensity")
         {
-            // nail -f adjustIntensity -i ../data/gcampchannel_mip.tif -o ../data/test.tif
+            cout<<"\n nail -f adjustIntensity -i ../data/gcampchannel_mip.tif -o ../data/test.tif \n"<<endl;
             Nail nail;
             nail.adjustIntensity(FLAGS_i, FLAGS_o);
         }
         else if(FLAGS_f == "imageReadWrite")
         {
-            // nail -f imageReadWrite -i <input> -o <output>
+            cout<<"\n nail -f imageReadWrite -i <input> -o <output> \n"<<endl;
             Nail nail;
             nail.imageReadWrite(FLAGS_i, FLAGS_o);
         }
         else if(FLAGS_f == "gammaFilter")
         {
-            // nail -f gammaFilter -i <input> -o <output> -gamma 0.5
+            cout<<"\n nail -f gammaFilter -i <input> -o <output> -gamma 0.5 \n"<<endl;
             Nail nail;
             nail.gammaFilter(FLAGS_i, FLAGS_o, FLAGS_gamma, ENCODE);
         }
         else if(FLAGS_f == "genMaskImageFromLabels")
         {
-            // nail -f genMaskImageFromLabels -i <input> -o <output> -s "4 9 43" -exclude true
+            cout<<"\n nail -f genMaskImageFromLabels -i <input> -o <output> -s \"4 9 43\" -exclude true \n"<<endl;
             Nail nail;
             nail.genMaskImageFromLabels(FLAGS_i, FLAGS_o, FLAGS_s, FLAGS_exclude);
         }
         else if(FLAGS_f == "genLabelImage")
         {
-            // nail -f genLabelImage -i <input> -o <output>
+            cout<<"\n nail -f genLabelImage -i <input> -o <output> \n"<<endl;
             Nail nail;
             nail.genLabelImage(FLAGS_i, FLAGS_o);
         }
         else if(FLAGS_f == "countVoxels")
         {
-            // nail -f countVoxels -i <input> -o <output> -s "1"
-            // nail -f countVoxels -i <input> -o <output> -s <mask> -withMask true -n 68
+            cout<<"\n nail -f countVoxels -i <input> -o <output> -s \"1\"";
+            cout<<"\n nail -f countVoxels -i <input> -o <output> -s <mask> -withMask true -n 68 \n"<<endl;
             Nail nail;
             nail.countVoxels(FLAGS_i, FLAGS_o, FLAGS_s, FLAGS_withMask, FLAGS_n);
         }
         else if(FLAGS_f == "binarize")
         {
-            // nail -f binarize -i <input> -o <output>
+            cout<<"\n nail -f binarize -i <input> -o <output>\n"<<endl;
             Nail nail;
             nail.binarize(FLAGS_i, FLAGS_o);
         }
         else if(FLAGS_f == "imageCompare")
         {
-            // nail -f imageCompare -i <input> -o <output> -ref <reference> -similarity <similarity-metric>
+            cout<<"\n nail -f imageCompare -i <input> -o <output> -ref <reference> -similarity <similarity-metric> \n"<<endl;
             Nail nail;
             nail.imageCompare(FLAGS_i, FLAGS_o, FLAGS_ref, (SimilarityType)(FLAGS_similarity));
         }
         else if(FLAGS_f == "constructStack")
         {
-            // nail -f constructStack -i <input> -o <output> -sz <z-dimension> -k <slope> -b <intercept>
+            cout<<"\n nail -f constructStack -i <input> -o <output> -sz <z-dimension> -k <slope> -b <intercept> \n"<<endl;
             Nail nail;
             nail.constructStack(FLAGS_i, FLAGS_o, FLAGS_sz, FLAGS_k, FLAGS_b);
         }
         else if(FLAGS_f == "findOptimalPath")
         {
-            // nail -f findOptimalPath -i <input> -o <output> -l <minY0> -r <maxY0> -d <minY> -u <maxY> -sx <x-dimension> -sy <y-dimension>
+            cout<<"\n nail -f findOptimalPath -i <input> -o <output> -l <minY0> -r <maxY0> -d <minY> -u <maxY> -sx <x-dimension> -sy <y-dimension> \n"<<endl;
             Nail nail;
             nail.findOptimalPath(FLAGS_i, FLAGS_o, FLAGS_sx, FLAGS_sy, FLAGS_l, FLAGS_r, FLAGS_d, FLAGS_u);
         }
