@@ -724,10 +724,30 @@ int Nail::adjustIntensity(string in, string out)
     return 0;
 }
 
-int Nail::imageReadWrite(string in, string out)
+int Nail::imageReadWrite(string in, string out, double vx, double vy, double vz)
 {
     //
     load(in);
+
+    if(vx>0 || vy>0 || vz>0)
+    {
+        process.getImage()->setSpaceUnit(UnitUM); // in the microscope context
+
+        if(vx>0)
+        {
+            process.getImage()->spacing.setX(vx);
+        }
+
+        if(vy>0)
+        {
+            process.getImage()->spacing.setY(vy);
+        }
+
+        if(vz>0)
+        {
+            process.getImage()->spacing.setZ(vz);
+        }
+    }
 
     //
     save(out);

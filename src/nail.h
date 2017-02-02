@@ -76,7 +76,7 @@ public:
 
     // image processing interface
     int adjustIntensity(string in, string out);
-    int imageReadWrite(string in, string out);
+    int imageReadWrite(string in, string out, double vx, double vy, double vz);
     int gammaFilter(string in, string out, double gamma, CodeType ct);
     int genMaskImageFromLabels(string in, string out, string s, bool exclude);
     int genLabelImage(string in, string out);

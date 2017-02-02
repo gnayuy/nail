@@ -21,9 +21,9 @@ DEFINE_uint64(x, 1, "offset (voxels) in x axis");
 DEFINE_uint64(y, 1, "offset (voxels) in y axis");
 DEFINE_uint64(z, 1, "offset (voxels) in z axis");
 
-DEFINE_double(vx, 1.0, "voxel size in x axis");
-DEFINE_double(vy, 1.0, "voxel size in y axis");
-DEFINE_double(vz, 1.0, "voxel size in z axis");
+DEFINE_double(vx, -1.0, "voxel size in x axis");
+DEFINE_double(vy, -1.0, "voxel size in y axis");
+DEFINE_double(vz, -1.0, "voxel size in z axis");
 
 DEFINE_double(gamma, 0.5, "gamma (0.5 by default) a non-linear histogram adjustment");
 DEFINE_string(s, "", "a string (e.g. labels, masks, ...)");
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
         {
             cout<<"\n nail -f imageReadWrite -i <input> -o <output> \n"<<endl;
             Nail nail;
-            nail.imageReadWrite(FLAGS_i, FLAGS_o);
+            nail.imageReadWrite(FLAGS_i, FLAGS_o, FLAGS_vx, FLAGS_vy, FLAGS_vz);
         }
         else if(FLAGS_f == "gammaFilter")
         {
