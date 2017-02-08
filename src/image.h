@@ -29,6 +29,8 @@ using namespace std;
 #include <Eigen/Eigen>
 using namespace Eigen;
 
+#include "biomedicaldataio.h"
+
 #ifndef EPSILON
 #define EPSILON 1E-10
 #endif
@@ -125,6 +127,12 @@ int getOptimalPath(Tdata *p, Tidx x, Tdata minY0, Tdata maxY0, Tdata minY, Tdata
 //
 template <class Tdata, class Tidx>
 int reconstructStack(Tdata *slices, Tidx n, Tdata *&stack, Tidx x, Tidx y, Tidx z, double k, double b);
+
+/// basic image processing
+
+//
+template <class Tdata, class Tidx>
+void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn);
 
 
 #endif // __IMAGE_H__

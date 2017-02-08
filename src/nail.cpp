@@ -1041,3 +1041,37 @@ int Nail::findOptimalPath(string in, string out, long sx, long sy, double minY0,
     return 0;
 }
 
+int Nail::recenterImage(string in, string out, long x, long y, long z, long c)
+{
+    //
+    load(in);
+
+    //
+    BioMedicalDataIO dpm;
+    dpm.data()->size.setXYZCT(x,y,z,c,1);
+    dpm.data()->setDataType(process.getImage()->dataType());
+    dpm.data()->zeros();
+
+    //
+    if(process.getImage()->dataType()==UCHAR)
+    {
+        unsigned char *pIn = (unsigned char *)(process.getImage()->data());
+        unsigned char *pOut = (unsigned char *)(dpm.data()->data());
+
+        recenter<unsigned char, long>(pOut, dpm.data()->size, pIn, process.getImage()->size);
+    }
+    else
+    {
+        // other data types
+    }
+
+    //
+    process.setImage(dpm.data());
+
+    //
+    save(out);
+
+    //
+    return 0;
+}
+

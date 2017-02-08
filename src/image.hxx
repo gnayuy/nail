@@ -490,6 +490,291 @@ int reconstructStack(Tdata *slices, Tidx n, Tdata *&stack, Tidx x, Tidx y, Tidx 
     return 0;
 }
 
+template <class Tdata, class Tidx>
+void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn)
+{
+    // resize image with multiple color channels
+
+    //
+    Tidx sx, sy, sz, sc;
+    sx = sizeIn.getX();
+    sy = sizeIn.getY();
+    sz = sizeIn.getZ();
+    sc = sizeIn.getC();
+
+    Tidx tx, ty, tz, tc;
+    tx = sizeOut.getX();
+    ty = sizeOut.getY();
+    tz = sizeOut.getZ();
+    tc = sizeOut.getC();
+
+    //
+    if(sc!=tc)
+    {
+        cout<<"Color dimensions are not match!"<<endl;
+        return;
+    }
+
+    //
+    if(sx==tx && sy==ty && sz==tz)
+    {
+        cout<<"No need to resize!"<<endl;
+        pOut = pIn;
+        return;
+    }
+
+    //
+    Tidx ofzin = sx*sy;
+    Tidx ofzout = tx*ty;
+
+    Tidx pgszin = ofzin*sz;
+    Tidx pgszout = ofzout*tz;
+
+    //
+    /// recenter
+    Tidx centerx, centery, centerz;
+    Tidx ncenterx, ncentery, ncenterz;
+
+    centerx = sx/2;
+    centery = sy/2;
+    centerz = sz/2;
+
+    ncenterx = tx/2;
+    ncentery = ty/2;
+    ncenterz = tz/2;
+
+    //shift
+    Tidx leftx = fabs(ncenterx-centerx);
+    Tidx rightx = fabs(sx + leftx);
+    if(sx>tx)
+    {
+        rightx = fabs(tx + leftx);
+        rightx = rightx>sx?sx:rightx;
+    }
+    else
+    {
+        rightx = rightx>tx?tx:rightx;
+    }
+
+    Tidx lefty = fabs(ncentery - centery);
+    Tidx righty = fabs(sy + lefty);
+    if(sy>ty)
+    {
+        righty = fabs(ty + lefty);
+        righty = righty>sy?sy:righty;
+    }
+    else
+    {
+        righty = righty>ty?ty:righty;
+    }
+
+    Tidx leftz = fabs(ncenterz - centerz);
+    Tidx rightz = fabs(sz + leftz);
+    if(sz>tz)
+    {
+        rightz = fabs(tz + leftz);
+        rightz = rightz>sz?sz:rightz;
+    }
+    else
+    {
+        rightz = rightz>tz?tz:rightz;
+    }
+
+    cout<<"test ... "<<leftx<<rightx<<" ... "<<lefty<<righty<<" ... "<<leftz<<rightz<<endl;
+    cout<<"test ... "<<sx<<sy<<sz<<" ... "<<tx<<ty<<tz<<endl;
+
+    //
+    if(tx<=sx)
+    {
+        if(ty<=sy)
+        {
+            if(tz<=sz)
+            {
+                //case 1
+                for(Tidx k=leftz; k<rightz; k++)
+                {
+                    Tidx offsetk =  k*ofzin;
+                    Tidx offsetnk = (k-leftz)*ofzout;
+                    for(Tidx j=lefty; j<righty; j++)
+                    {
+                        Tidx offsetj = offsetk + j*sx;
+                        Tidx offsetnj = offsetnk + (j-lefty)*tx;
+                        for(Tidx i=leftx; i<rightx; i++)
+                        {
+                            for(Tidx c=0; c<tc; c++)
+                            {
+                                pOut[c*pgszout + offsetnj + (i-leftx)] = pIn[c*pgszin + offsetj + i];
+                            }
+                        }
+                    }
+                }
+
+            }
+            else
+            {
+                //case 2
+                for(Tidx k=leftz; k<rightz; k++)
+                {
+                    Tidx offsetk = (k-leftz)*ofzin;
+                    Tidx offsetnk = k*ofzout;
+                    for(Tidx j=lefty; j<righty; j++)
+                    {
+                        Tidx offsetj = offsetk + j*sx;
+                        Tidx offsetnj = offsetnk + (j-lefty)*tx;
+                        for(Tidx i=leftx; i<rightx; i++)
+                        {
+                            for(Tidx c=0; c<tc; c++)
+                            {
+                                pOut[c*pgszout + offsetnj + (i-leftx)] = pIn[c*pgszin + offsetj + i];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            if(tz<=sz)
+            {
+                //case 3
+                for(Tidx k=leftz; k<rightz; k++)
+                {
+                    Tidx offsetk = k*ofzin;
+                    Tidx offsetnk = (k-leftz)*ofzout;
+                    for(Tidx j=lefty; j<righty; j++)
+                    {
+                        Tidx offsetj = offsetk + (j-lefty)*sx;
+                        Tidx offsetnj = offsetnk + j*tx;
+                        for(Tidx i=leftx; i<rightx; i++)
+                        {
+                            for(Tidx c=0; c<tc; c++)
+                            {
+                                pOut[c*pgszout + offsetnj + (i-leftx)] = pIn[c*pgszin + offsetj + i];
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //case 4
+                for(Tidx k=leftz; k<rightz; k++)
+                {
+                    Tidx offsetk = (k-leftz)*ofzin;
+                    Tidx offsetnk = k*ofzout;
+                    for(Tidx j=lefty; j<righty; j++)
+                    {
+                        Tidx offsetj = offsetk + (j-lefty)*sx;
+                        Tidx offsetnj = offsetnk + j*tx;
+                        for(Tidx i=leftx; i<rightx; i++)
+                        {
+                            for(Tidx c=0; c<tc; c++)
+                            {
+                                pOut[c*pgszout + offsetnj + (i-leftx)] = pIn[c*pgszin + offsetj + i];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        if(ty<=sy)
+        {
+            if(tz<=sz)
+            {
+                //case 5
+                for(Tidx k=leftz; k<rightz; k++)
+                {
+                    Tidx offsetk = k*ofzin;
+                    Tidx offsetnk = (k-leftz)*ofzout;
+                    for(Tidx j=lefty; j<righty; j++)
+                    {
+                        Tidx offsetj = offsetk + j*sx;
+                        Tidx offsetnj = offsetnk + (j-lefty)*tx;
+                        for(Tidx i=leftx; i<rightx; i++)
+                        {
+                            for(Tidx c=0; c<tc; c++)
+                            {
+                                pOut[c*pgszout + offsetnj + i] = pIn[c*pgszin + offsetj + (i-leftx)];
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //case 6
+                for(Tidx k=leftz; k<rightz; k++)
+                {
+                    Tidx offsetk = (k-leftz)*ofzin;
+                    Tidx offsetnk = k*ofzout;
+                    for(Tidx j=lefty; j<righty; j++)
+                    {
+                        Tidx offsetj = offsetk + j*sx;
+                        Tidx offsetnj = offsetnk + (j-lefty)*tx;
+                        for(Tidx i=leftx; i<rightx; i++)
+                        {
+                            for(Tidx c=0; c<tc; c++)
+                            {
+                                pOut[c*pgszout + offsetnj + i] = pIn[c*pgszin + offsetj + (i-leftx)];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            if(tz<=sz)
+            {
+                //case 7
+                for(Tidx k=leftz; k<rightz; k++)
+                {
+                    Tidx offsetk = k*ofzin;
+                    Tidx offsetnk = (k-leftz)*ofzout;
+                    for(Tidx j=lefty; j<righty; j++)
+                    {
+                        Tidx offsetj = offsetk + (j-lefty)*sx;
+                        Tidx offsetnj = offsetnk + j*tx;
+                        for(Tidx i=leftx; i<rightx; i++)
+                        {
+                            for(Tidx c=0; c<tc; c++)
+                            {
+                                pOut[c*pgszout + offsetnj + i] = pIn[c*pgszin + offsetj + (i-leftx)];
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //case 8
+                for(Tidx k=leftz; k<rightz; k++)
+                {
+                    Tidx offsetk = (k-leftz)*ofzin;
+                    Tidx offsetnk = k*ofzout;
+                    for(Tidx j=lefty; j<righty; j++)
+                    {
+                        Tidx offsetj = offsetk + (j-lefty)*sx;
+                        Tidx offsetnj = offsetnk + j*tx;
+                        for(Tidx i=leftx; i<rightx; i++)
+                        {
+                            for(Tidx c=0; c<tc; c++)
+                            {
+                                pOut[c*pgszout + offsetnj + i] = pIn[c*pgszin + offsetj + (i-leftx)];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return;
+}
+
 
 
 #endif // __IMAGE_HXX__

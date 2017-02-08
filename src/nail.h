@@ -9,7 +9,6 @@
 #include <sys/time.h>
 #include <gflags/gflags.h>
 
-#include "biomedicaldataio.h"
 #include "image.h"
 #include "image.hxx"
 
@@ -85,6 +84,7 @@ public:
     int imageCompare(string in, string out, string ref, SimilarityType similarity);
     int constructStack(string in, string out, long z, double k, double b);
     int findOptimalPath(string in, string out, long sx, long sy, double minY0, double maxY0, double minY, double maxY);
+    int recenterImage(string in, string out, long x, long y, long z, long c);
 
 public:
     ImageProcess process;
