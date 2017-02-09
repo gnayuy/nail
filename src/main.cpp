@@ -130,6 +130,12 @@ int main(int argc, char *argv[])
             Nail nail;
             nail.findOptimalPath(FLAGS_i, FLAGS_o, FLAGS_sx, FLAGS_sy, FLAGS_l, FLAGS_r, FLAGS_d, FLAGS_u);
         }
+        else if(FLAGS_f == "recenterImage")
+        {
+            cout<<"\n nail -f recenterImage -i <input> -o <output> -sx <x-dimension> -sy <y-dimension> -sz <z-dimension>\n"<<endl;
+            Nail nail;
+            nail.recenterImage(FLAGS_i, FLAGS_o, FLAGS_sx, FLAGS_sy, FLAGS_sz, 1);
+        }
         else if(FLAGS_f == "help")
         {
             cout<<endl<<"nail -f <function>"<<endl;
@@ -144,6 +150,7 @@ int main(int argc, char *argv[])
             cout<<"\t"<<"imageCompare"<<endl;
             cout<<"\t"<<"constructStack"<<endl;
             cout<<"\t"<<"findOptimalPath"<<endl;
+            cout<<"\t"<<"recenterImage"<<endl;
             cout<<endl;
         }
         else
