@@ -1053,6 +1053,9 @@ int Nail::recenterImage(string in, string out, long x, long y, long z, long c)
     dpm.data()->zeros();
 
     //
+    cout<<process.getImage()->size.getC()<<endl;
+
+    //
     if(process.getImage()->dataType()==UCHAR)
     {
         unsigned char *pIn = (unsigned char *)(process.getImage()->data());

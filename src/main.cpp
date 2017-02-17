@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
         {
             cout<<"\n nail -f recenterImage -i <input> -o <output> -sx <x-dimension> -sy <y-dimension> -sz <z-dimension>\n"<<endl;
             Nail nail;
-            nail.recenterImage(FLAGS_i, FLAGS_o, FLAGS_sx, FLAGS_sy, FLAGS_sz, 1);
+            nail.recenterImage(FLAGS_i, FLAGS_o, FLAGS_sx, FLAGS_sy, FLAGS_sz, FLAGS_sc);
         }
         else if(FLAGS_f == "help")
         {
