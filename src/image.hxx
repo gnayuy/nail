@@ -509,13 +509,6 @@ void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn)
     tc = sizeOut.getC();
 
     //
-    if(sc!=tc)
-    {
-        cout<<"Color dimensions are not match!"<<endl;
-        return;
-    }
-
-    //
     if(sx==tx && sy==ty && sz==tz)
     {
         cout<<"No need to resize!"<<endl;
@@ -580,9 +573,6 @@ void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn)
         rightz = rightz>tz?tz:rightz;
     }
 
-    cout<<"test ... "<<leftx<<rightx<<" ... "<<lefty<<righty<<" ... "<<leftz<<rightz<<endl;
-    cout<<"test ... "<<sx<<sy<<sz<<" ... "<<tx<<ty<<tz<<endl;
-
     //
     if(tx<=sx)
     {
@@ -601,7 +591,7 @@ void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn)
                         Tidx offsetnj = offsetnk + (j-lefty)*tx;
                         for(Tidx i=leftx; i<rightx; i++)
                         {
-                            for(Tidx c=0; c<tc; c++)
+                            for(Tidx c=0; c<sc; c++)
                             {
                                 pOut[c*pgszout + offsetnj + (i-leftx)] = pIn[c*pgszin + offsetj + i];
                             }
@@ -623,7 +613,7 @@ void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn)
                         Tidx offsetnj = offsetnk + (j-lefty)*tx;
                         for(Tidx i=leftx; i<rightx; i++)
                         {
-                            for(Tidx c=0; c<tc; c++)
+                            for(Tidx c=0; c<sc; c++)
                             {
                                 pOut[c*pgszout + offsetnj + (i-leftx)] = pIn[c*pgszin + offsetj + i];
                             }
@@ -647,7 +637,7 @@ void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn)
                         Tidx offsetnj = offsetnk + j*tx;
                         for(Tidx i=leftx; i<rightx; i++)
                         {
-                            for(Tidx c=0; c<tc; c++)
+                            for(Tidx c=0; c<sc; c++)
                             {
                                 pOut[c*pgszout + offsetnj + (i-leftx)] = pIn[c*pgszin + offsetj + i];
                             }
@@ -668,7 +658,7 @@ void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn)
                         Tidx offsetnj = offsetnk + j*tx;
                         for(Tidx i=leftx; i<rightx; i++)
                         {
-                            for(Tidx c=0; c<tc; c++)
+                            for(Tidx c=0; c<sc; c++)
                             {
                                 pOut[c*pgszout + offsetnj + (i-leftx)] = pIn[c*pgszin + offsetj + i];
                             }
@@ -695,7 +685,7 @@ void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn)
                         Tidx offsetnj = offsetnk + (j-lefty)*tx;
                         for(Tidx i=leftx; i<rightx; i++)
                         {
-                            for(Tidx c=0; c<tc; c++)
+                            for(Tidx c=0; c<sc; c++)
                             {
                                 pOut[c*pgszout + offsetnj + i] = pIn[c*pgszin + offsetj + (i-leftx)];
                             }
@@ -716,7 +706,7 @@ void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn)
                         Tidx offsetnj = offsetnk + (j-lefty)*tx;
                         for(Tidx i=leftx; i<rightx; i++)
                         {
-                            for(Tidx c=0; c<tc; c++)
+                            for(Tidx c=0; c<sc; c++)
                             {
                                 pOut[c*pgszout + offsetnj + i] = pIn[c*pgszin + offsetj + (i-leftx)];
                             }
@@ -740,7 +730,7 @@ void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn)
                         Tidx offsetnj = offsetnk + j*tx;
                         for(Tidx i=leftx; i<rightx; i++)
                         {
-                            for(Tidx c=0; c<tc; c++)
+                            for(Tidx c=0; c<sc; c++)
                             {
                                 pOut[c*pgszout + offsetnj + i] = pIn[c*pgszin + offsetj + (i-leftx)];
                             }
@@ -761,7 +751,7 @@ void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn)
                         Tidx offsetnj = offsetnk + j*tx;
                         for(Tidx i=leftx; i<rightx; i++)
                         {
-                            for(Tidx c=0; c<tc; c++)
+                            for(Tidx c=0; c<sc; c++)
                             {
                                 pOut[c*pgszout + offsetnj + i] = pIn[c*pgszin + offsetj + (i-leftx)];
                             }
