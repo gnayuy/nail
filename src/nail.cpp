@@ -4,6 +4,23 @@
 
 #include "nail.h"
 
+//
+bool doubleVarCompare(double x, double y)
+{
+    if(y_abs<double>(x-y)<EPS)
+        return true;
+    else
+        return false;
+}
+
+bool floatVarCompare(float x, float y)
+{
+    if(y_abs<float>(x-y)<EPS)
+        return true;
+    else
+        return false;
+}
+
 // class IntensityRange
 IntensityRange::IntensityRange()
 {

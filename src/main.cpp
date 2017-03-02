@@ -35,6 +35,11 @@ DEFINE_uint32(similarity, 2, "similarity metric (NCC=2, NMI=3, ...)");
 DEFINE_double(k, 1.0, "slope");
 DEFINE_double(b, 0.0, "intercept");
 
+DEFINE_double(sr, 1.0, "sampling ratio (xyz isotropic)");
+DEFINE_double(srx, 1.0, "x sampling ratio");
+DEFINE_double(sry, 1.0, "y sampling ratio");
+DEFINE_double(srz, 1.0, "z sampling ratio");
+
 DEFINE_double(l, 0.0, "x0");
 DEFINE_double(r, 0.0, "x1");
 DEFINE_double(d, 0.0, "y0");
@@ -130,11 +135,19 @@ int main(int argc, char *argv[])
             Nail nail;
             nail.findOptimalPath(FLAGS_i, FLAGS_o, FLAGS_sx, FLAGS_sy, FLAGS_l, FLAGS_r, FLAGS_d, FLAGS_u);
         }
-        else if(FLAGS_f == "recenterImage")
+        else if(FLAGS_f == "imageResize")
         {
-            cout<<"\n nail -f recenterImage -i <input> -o <output> -sx <x-dimension> -sy <y-dimension> -sz <z-dimension>\n"<<endl;
+            cout<<"\n nail -f imageResize -i <input> -o <output> -sx <x-dimension> -sy <y-dimension> -sz <z-dimension>\n"<<endl;
             Nail nail;
-            nail.recenterImage(FLAGS_i, FLAGS_o, FLAGS_sx, FLAGS_sy, FLAGS_sz, FLAGS_sc);
+
+            if(!doubleVarCompare(FLAGS_sr, 1.0) || !doubleVarCompare(FLAGS_srx, 1.0) || !doubleVarCompare(FLAGS_sry, 1.0) || !doubleVarCompare(FLAGS_srz, 1.0) )
+            {
+                // sampling
+            }
+            else
+            {
+                nail.recenterImage(FLAGS_i, FLAGS_o, FLAGS_sx, FLAGS_sy, FLAGS_sz, FLAGS_sc);
+            }
         }
         else if(FLAGS_f == "help")
         {
@@ -150,7 +163,7 @@ int main(int argc, char *argv[])
             cout<<"\t"<<"imageCompare"<<endl;
             cout<<"\t"<<"constructStack"<<endl;
             cout<<"\t"<<"findOptimalPath"<<endl;
-            cout<<"\t"<<"recenterImage"<<endl;
+            cout<<"\t"<<"imageResize"<<endl;
             cout<<endl;
         }
         else

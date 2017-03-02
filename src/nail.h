@@ -2,6 +2,12 @@
 // neural activity imaging library
 // developed by Yang Yu (gnayuy@gmail.com)
 
+
+// todo list
+// 1. mls affine
+// 2. warp
+//
+
 #ifndef __NAIL_H__
 #define __NAIL_H__
 
@@ -16,6 +22,10 @@
 typedef Vec1D<int> IVec1D;
 typedef Vec1D<long> LVec1D;
 typedef Vec1D<string> SVec1D;
+
+//
+bool doubleVarCompare(double x, double y);
+bool floatVarCompare(float x, float y);
 
 //
 class IntensityRange
