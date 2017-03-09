@@ -17,9 +17,9 @@ DEFINE_uint64(sz, 1, "size (voxels) in z axis");
 DEFINE_uint64(sc, 1, "the number of color channels");
 DEFINE_uint64(st, 1, "the number of time frames");
 
-DEFINE_uint64(x, 1, "offset (voxels) in x axis");
-DEFINE_uint64(y, 1, "offset (voxels) in y axis");
-DEFINE_uint64(z, 1, "offset (voxels) in z axis");
+DEFINE_uint64(x, 0, "offset (voxels) in x axis");
+DEFINE_uint64(y, 0, "offset (voxels) in y axis");
+DEFINE_uint64(z, 0, "offset (voxels) in z axis");
 
 DEFINE_double(vx, -1.0, "voxel size in x axis");
 DEFINE_double(vy, -1.0, "voxel size in y axis");
@@ -34,6 +34,11 @@ DEFINE_uint32(similarity, 2, "similarity metric (NCC=2, NMI=3, ...)");
 
 DEFINE_double(k, 1.0, "slope");
 DEFINE_double(b, 0.0, "intercept");
+
+DEFINE_uint64(step, 1, "step (voxels) in one dimension");
+DEFINE_uint64(xstep, 1, "step (voxels) in x dimension");
+DEFINE_uint64(ystep, 1, "step (voxels) in y dimension");
+DEFINE_uint64(zstep, 1, "step (voxels) in z dimension");
 
 DEFINE_double(sr, 1.0, "sampling ratio (xyz isotropic)");
 DEFINE_double(srx, 1.0, "x sampling ratio");
@@ -149,6 +154,18 @@ int main(int argc, char *argv[])
                 nail.recenterImage(FLAGS_i, FLAGS_o, FLAGS_sx, FLAGS_sy, FLAGS_sz, FLAGS_sc);
             }
         }
+        else if(FLAGS_f == "seq2stack")
+        {
+            cout<<"\n nail -f seq2stack -i <input> -o <output> -z <first-z-slice> -zstep <z-step> -sz <z-dimension> \n"<<endl;
+            Nail nail;
+            nail.seq2stack(FLAGS_i, FLAGS_o, FLAGS_z, FLAGS_zstep, FLAGS_sz);
+        }
+        else if(FLAGS_f == "convert2byte")
+        {
+            cout<<"\n nail -f convert2byte -i <input> -o <output> \n"<<endl;
+            Nail nail;
+            nail.convert2byte(FLAGS_i, FLAGS_o);
+        }
         else if(FLAGS_f == "help")
         {
             cout<<endl<<"nail -f <function>"<<endl;
@@ -164,6 +181,8 @@ int main(int argc, char *argv[])
             cout<<"\t"<<"constructStack"<<endl;
             cout<<"\t"<<"findOptimalPath"<<endl;
             cout<<"\t"<<"imageResize"<<endl;
+            cout<<"\t"<<"seq2stack"<<endl;
+            cout<<"\t"<<"convert2byte"<<endl;
             cout<<endl;
         }
         else

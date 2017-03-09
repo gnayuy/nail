@@ -95,6 +95,8 @@ public:
     int constructStack(string in, string out, long z, double k, double b);
     int findOptimalPath(string in, string out, long sx, long sy, double minY0, double maxY0, double minY, double maxY);
     int recenterImage(string in, string out, long x, long y, long z, long c);
+    int seq2stack(string in, string out, long zpos, long zstep, long z);
+    int convert2byte(string in, string out);
 
 public:
     ImageProcess process;

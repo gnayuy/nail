@@ -1095,3 +1095,206 @@ int Nail::recenterImage(string in, string out, long x, long y, long z, long c)
     return 0;
 }
 
+int Nail::seq2stack(string in, string out, long zpos, long zstep, long z)
+{
+    //  in: a text file of image paths
+    // out: a image stack
+
+    // read file names
+    string fn;
+    vector<string> imList;
+    ifstream fin(const_cast<char*>(in.c_str()));
+
+    if(fin.is_open())
+    {
+        while( getline(fin, fn) )
+        {
+            cout<<fn<<endl;
+            imList.push_back(fn);
+        }
+        fin.close();
+    }
+    else
+    {
+        cout << "Fail to open the input image list." << endl;
+        return -1;
+    }
+
+    //
+    if(z<imList.size())
+    {
+        z = imList.size();
+    }
+    else
+    {
+        if(zpos + (imList.size() - 1)*zstep > z)
+        {
+            cout << "z dimension is invalid." << endl;
+            return -1;
+        }
+    }
+
+    //
+    long x, y, offsets, zoffsets;
+    BioMedicalData *stack = new BioMedicalData();
+
+    //
+    for(int i=0; i<imList.size(); i++)
+    {
+        fn = imList[i];
+
+        BioMedicalDataIO bmd;
+        if(bmd.readData(fn)!=0)
+        {
+            cout<<"Fail to read data!"<<endl;
+            return -1;
+        }
+
+        if(i==0)
+        {
+            x = bmd.data()->size.getX();
+            y = bmd.data()->size.getY();
+            offsets = x*y*bmd.data()->size.getZ(); // pick the first slice in green channel, hard coded
+
+            stack->setDataType(bmd.data()->dataType());
+            stack->size.setXYZCT(x,y,z,1,1);
+            stack->zeros();
+        }
+
+        zoffsets = (i*zstep + zpos)*x*y;
+
+        // copy data
+        if(bmd.data()->dataType()==UCHAR)
+        {
+            //unsigned char *p = (unsigned char *)(bmd.data()->data());
+            //unsigned char *pStack = (unsigned char *)(stack->data());
+
+            //pStack[zoffsets + idx] = p[offsets + idx];
+        }
+        else if(bmd.data()->dataType()==CHAR)
+        {
+            //char *p = (char *)(bmd.data()->data());
+            //char *pStack = (char *)(stack->data());
+
+            //pStack[zoffsets + idx] = p[offsets + idx];
+        }
+        else if(bmd.data()->dataType()==USHORT)
+        {
+            //unsigned short *p = (unsigned short *)(bmd.data()->data());
+            //unsigned short *pStack = (unsigned short *)(stack->data());
+
+            //pStack[zoffsets + idx] = p[offsets + idx];
+        }
+        else if(bmd.data()->dataType()==SHORT)
+        {
+            short *p = (short *)(bmd.data()->data());
+            short *pStack = (short *)(stack->data());
+
+            for(int m=0; m<y; m++)
+            {
+                long yoff = m*x;
+                for(int n=0; n<x; n++)
+                {
+                    long idx = yoff + n;
+
+                    pStack[zoffsets + idx] = p[offsets + idx];
+                }
+            }
+        }
+        else
+        {
+            cout<<"Unsupported datatype "<<bmd.data()->dataType()<<endl;
+            return -1;
+        }
+    }
+
+    //
+    process.setImage(stack);
+
+    //
+    save(out);
+
+    //
+    return 0;
+}
+
+int Nail::convert2byte(string in, string out)
+{
+    //
+    load(in);
+
+    //
+    BioMedicalDataIO dpm;
+    dpm.data()->size.setSize(process.getImage()->size);
+    dpm.data()->setDataType(UCHAR);
+    dpm.data()->zeros();
+
+    cout<<in<<endl;
+    cout<<"process.getImage()->dataType() "<<process.getImage()->dataType()<<" "<<SHORT<<endl;
+
+    //
+    if(process.getImage()->dataType()==SHORT)
+    {
+        short *pIn = (short *)(process.getImage()->data());
+        unsigned char *pOut = (unsigned char *)(dpm.data()->data());
+
+        long sz = process.getImage()->size.getZ();
+        long sy = process.getImage()->size.getY();
+        long sx = process.getImage()->size.getX();
+
+        long size = process.getImage()->size.size();
+
+        short maxVal=0;
+        short minVal=65535;
+        for(int i=0; i<size; i++)
+        {
+            short val = pIn[i];
+
+            if(maxVal<val)
+                maxVal = val;
+            if(minVal>val)
+                minVal = val;
+        }
+
+        short dist = maxVal - minVal;
+
+        if(dist==0)
+        {
+            cout<<"NULL image."<<endl;
+            return -1;
+        }
+
+        double factor = 255.0/(double)(dist);
+
+        cout<<"test ... "<<sx<<" "<<sy<<" "<<sz<<" "<<dist<<" "<<factor<<endl;
+
+        for(int z=0; z<sz; z++)
+        {
+            long ofz = z*sx*sy;
+            for(int y=0; y<sy; y++)
+            {
+                long ofy = ofz + y*sx;
+                for(int x=0; x<sx; x++)
+                {
+                    long idx = ofy + x;
+
+                    pOut[idx] = factor*(pIn[idx] - minVal);
+                }
+            }
+        }
+    }
+    else
+    {
+        // other data types
+    }
+
+    //
+    process.setImage(dpm.data());
+
+    //
+    save(out);
+
+    //
+    return 0;
+}
+
