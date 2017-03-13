@@ -765,6 +765,78 @@ void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn)
     return;
 }
 
+template<class Tdata, class Tidx>
+int isampler(Tdata *&dst, Tdata *src, Tidx dx, Tidx dy, Tidx dz, Tidx sx, Tidx sy, Tidx sz, double rx, double ry, double rz)
+{
+    if(!dst || !src || dx<0 || dy<0 || dz<0 || sx<0 || sy<0 || sz<0 || rx<0 || ry<0 || rz<0)
+    {
+        cout<<"Invalid inputs."<<endl;
+        return -1;
+    }
 
+    //
+    Tidx x,y,z,x_s, x_e, y_s, y_e, z_s, z_e;
+    Tidx slicesz = dx*dy;
+    Tidx nslicesz = sx*sy;
+    double proj_x, proj_y, proj_z, l,r,u,d,f,b,i1,i2,j1,j2,w1,w2;
+
+    //
+    for(z=0; z<dz; z++)
+    {
+        for(y=0; y<dy; y++)
+        {
+            for(x=0; x<dx; x++)
+            {
+                proj_x = x/rx;
+                proj_y = y/ry;
+                proj_z = z/rz;
+
+                //
+                if((proj_x>=0) && (proj_x<sx) && (proj_y>=0) && (proj_y<sy) && (proj_z>=0) && (proj_z<sz))
+                {
+                    // trilinear interpolation
+                    x_s=floor(proj_x);
+                    x_e=ceil(proj_x);
+                    y_s=floor(proj_y);
+                    y_e=ceil(proj_y);
+                    z_s=floor(proj_z);
+                    z_e=ceil(proj_z);
+
+                    x_s=x_s<0?0:x_s;
+                    y_s=y_s<0?0:y_s;
+                    z_s=z_s<0?0:z_s;
+
+                    x_e=x_e>=sx?sx-1:x_e;
+                    y_e=y_e>=sy?sy-1:y_e;
+                    z_e=z_e>=sz?sz-1:z_e;
+
+                    l = 1.0 - (proj_x-(double)(x_s));
+                    r = 1.0 -l;
+                    u = 1.0 - (proj_y-(double)(y_s));
+                    d = 1.0 -u;
+                    f = 1.0 - (proj_z-(double)(z_s));
+                    b = 1.0 -f;
+
+                    i1 = (double)(src[z_s*nslicesz + y_s*sx + x_s]) * f + (double)(src[z_e*nslicesz + y_s*sx + x_s]) * b;
+                    i2 = (double)(src[z_s*nslicesz + y_e*sx + x_s]) * f + (double)(src[z_e*nslicesz + y_e*sx + x_s]) * b;
+                    j1 = (double)(src[z_s*nslicesz + y_s*sx + x_e]) * f + (double)(src[z_e*nslicesz + y_s*sx + x_e]) * b;
+                    j2 = (double)(src[z_s*nslicesz + y_e*sx + x_e]) * f + (double)(src[z_e*nslicesz + y_e*sx + x_e]) * b;
+
+                    w1 = i1 * u + i2 * d;
+                    w2 = j1 * u + j2 * d;
+
+                    dst[z*slicesz + y*dx + x] = (Tdata)(w1 * l + w2 * r + 0.5);
+                }
+                else
+                {
+                    dst[z*slicesz + y*dx + x] = 0;
+                }
+            }
+        }
+    }
+
+    //
+    return 0;
+}
 
 #endif // __IMAGE_HXX__

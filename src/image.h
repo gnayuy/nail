@@ -133,6 +133,7 @@ int reconstructStack(Tdata *slices, Tidx n, Tdata *&stack, Tidx x, Tidx y, Tidx 
 //
 template <class Tdata, class Tidx>
 void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn);
-
+template<class Tdata, class Tidx>
+int isampler(Tdata *&dst, Tdata *src, Tidx dx, Tidx dy, Tidx dz, Tidx sx, Tidx sy, Tidx sz, double rx, double ry, double rz);
 
 #endif // __IMAGE_H__

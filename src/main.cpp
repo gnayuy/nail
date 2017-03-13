@@ -148,6 +148,14 @@ int main(int argc, char *argv[])
             if(!doubleVarCompare(FLAGS_sr, 1.0) || !doubleVarCompare(FLAGS_srx, 1.0) || !doubleVarCompare(FLAGS_sry, 1.0) || !doubleVarCompare(FLAGS_srz, 1.0) )
             {
                 // sampling
+                if(!doubleVarCompare(FLAGS_sr, 1.0))
+                {
+                    nail.imageSampling(FLAGS_i, FLAGS_o, FLAGS_sr, FLAGS_sr, FLAGS_sr);
+                }
+                else
+                {
+                    nail.imageSampling(FLAGS_i, FLAGS_o, FLAGS_srx, FLAGS_sry, FLAGS_srz);
+                }
             }
             else
             {

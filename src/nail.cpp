@@ -676,6 +676,42 @@ double ImageProcess::imageCompare(BioMedicalData *reference, SimilarityType simi
     return metric;
 }
 
+void ImageProcess::sampling(BioMedicalData *image, double srx, double sry, double srz)
+{
+    //
+    long sx = image->size.getX();
+    long sy = image->size.getY();
+    long sz = image->size.getZ();
+
+    long dx = sx*srx;
+    long dy = sy*sry;
+    long dz = sz*srz;
+
+    long dc = image->size.getC();
+    long dt = image->size.getT();
+
+    //
+    if(image->data())
+    {
+        if(image->dataType()==UCHAR)
+        {
+            m_image->size.setXYZCT(dx, dy, dz, dc, dt);
+            m_image->setDataType(UCHAR);
+            m_image->zeros();
+
+            unsigned char *p1 = (unsigned char *) (m_image->data());
+            unsigned char *p2 = (unsigned char *) (image->data());
+
+            isampler<unsigned char, long>(p1, p2, dx, dy, dz, sx, sy, sz, srx, sry, srz);
+        }
+        else
+        {
+            // other datatype
+        }
+    }
+
+}
+
 // class Nail
 Nail::Nail()
 {
@@ -1290,6 +1326,27 @@ int Nail::convert2byte(string in, string out)
 
     //
     process.setImage(dpm.data());
+
+    //
+    save(out);
+
+    //
+    return 0;
+}
+
+int Nail::imageSampling(string in, string out, double srx, double sry, double srz)
+{
+    //
+    BioMedicalDataIO bmdata;
+
+    if(bmdata.readData(in)!=0)
+    {
+        cout<<"Fail to read data!"<<endl;
+        return -1;
+    }
+
+    //
+    process.sampling(bmdata.data(), srx, sry, srz);
 
     //
     save(out);
