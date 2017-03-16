@@ -50,6 +50,8 @@ DEFINE_double(r, 0.0, "x1");
 DEFINE_double(d, 0.0, "y0");
 DEFINE_double(u, 0.0, "y1");
 
+DEFINE_uint64(interp, 2, "interpolation type (Linear by default)");
+
 //
 DEFINE_bool(test, false, "test");
 DEFINE_uint64(testOption, 0, "test option");
@@ -150,11 +152,11 @@ int main(int argc, char *argv[])
                 // sampling
                 if(!doubleVarCompare(FLAGS_sr, 1.0))
                 {
-                    nail.imageSampling(FLAGS_i, FLAGS_o, FLAGS_sr, FLAGS_sr, FLAGS_sr);
+                    nail.imageSampling(FLAGS_i, FLAGS_o, FLAGS_sr, FLAGS_sr, FLAGS_sr, FLAGS_interp);
                 }
                 else
                 {
-                    nail.imageSampling(FLAGS_i, FLAGS_o, FLAGS_srx, FLAGS_sry, FLAGS_srz);
+                    nail.imageSampling(FLAGS_i, FLAGS_o, FLAGS_srx, FLAGS_sry, FLAGS_srz, FLAGS_interp);
                 }
             }
             else

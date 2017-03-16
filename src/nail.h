@@ -66,7 +66,7 @@ public:
     LVec1D * countVoxels(IVec1D *labels);
     LVec1D * countVoxels(BioMedicalData *mask, int nLabels);
     double imageCompare(BioMedicalData *reference, SimilarityType similarity);
-    void sampling(BioMedicalData *image, double srx, double sry, double srz);
+    void sampling(BioMedicalData *image, double srx, double sry, double srz, int interptype);
 
 public:
     BioMedicalData *m_image;
@@ -98,7 +98,8 @@ public:
     int recenterImage(string in, string out, long x, long y, long z, long c);
     int seq2stack(string in, string out, long zpos, long zstep, long z);
     int convert2byte(string in, string out);
-    int imageSampling(string in, string out, double srx, double sry, double srz);
+    int imageSampling(string in, string out, double srx, double sry, double srz, int interptype);
+    int imageTranslate(string in, string out, long x, long y, long z, long sx, long sy, long sz);
 
 public:
     ImageProcess process;

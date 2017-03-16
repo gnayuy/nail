@@ -766,7 +766,7 @@ void recenter(Tdata* &pOut, LQuintuplet sizeOut, Tdata* pIn, LQuintuplet sizeIn)
 }
 
 template<class Tdata, class Tidx>
-int isampler(Tdata *&dst, Tdata *src, Tidx dx, Tidx dy, Tidx dz, Tidx sx, Tidx sy, Tidx sz, double rx, double ry, double rz)
+int isampler(Tdata *&dst, Tdata *src, Tidx dx, Tidx dy, Tidx dz, Tidx sx, Tidx sy, Tidx sz, double rx, double ry, double rz, InterpolationType interptype)
 {
     if(!dst || !src || dx<0 || dy<0 || dz<0 || sx<0 || sy<0 || sz<0 || rx<0 || ry<0 || rz<0)
     {
@@ -810,22 +810,44 @@ int isampler(Tdata *&dst, Tdata *src, Tidx dx, Tidx dy, Tidx dz, Tidx sx, Tidx s
                     y_e=y_e>=sy?sy-1:y_e;
                     z_e=z_e>=sz?sz-1:z_e;
 
-                    l = 1.0 - (proj_x-(double)(x_s));
-                    r = 1.0 -l;
-                    u = 1.0 - (proj_y-(double)(y_s));
-                    d = 1.0 -u;
-                    f = 1.0 - (proj_z-(double)(z_s));
-                    b = 1.0 -f;
+                    if(interptype==NearestNeighbor)
+                    {
+                        Tidx xnn, ynn, znn;
+                        double we, ws;
 
-                    i1 = (double)(src[z_s*nslicesz + y_s*sx + x_s]) * f + (double)(src[z_e*nslicesz + y_s*sx + x_s]) * b;
-                    i2 = (double)(src[z_s*nslicesz + y_e*sx + x_s]) * f + (double)(src[z_e*nslicesz + y_e*sx + x_s]) * b;
-                    j1 = (double)(src[z_s*nslicesz + y_s*sx + x_e]) * f + (double)(src[z_e*nslicesz + y_s*sx + x_e]) * b;
-                    j2 = (double)(src[z_s*nslicesz + y_e*sx + x_e]) * f + (double)(src[z_e*nslicesz + y_e*sx + x_e]) * b;
+                        we = (x_e-proj_x);
+                        ws = (proj_x-x_s);
+                        xnn = (ws<=we) ? x_s : x_e;
 
-                    w1 = i1 * u + i2 * d;
-                    w2 = j1 * u + j2 * d;
+                        we = (y_e-proj_y);
+                        ws = (proj_y-y_s);
+                        ynn = (ws<=we) ? y_s : y_e;
 
-                    dst[z*slicesz + y*dx + x] = (Tdata)(w1 * l + w2 * r + 0.5);
+                        we = (z_e-proj_z);
+                        ws = (proj_z-z_s);
+                        znn = (ws<=we) ? z_s : z_e;
+
+                        dst[z*slicesz + y*dx + x] = src[znn*nslicesz + ynn*sx + xnn];
+                    }
+                    else if(interptype==Linear)
+                    {
+                        l = 1.0 - (proj_x-(double)(x_s));
+                        r = 1.0 -l;
+                        u = 1.0 - (proj_y-(double)(y_s));
+                        d = 1.0 -u;
+                        f = 1.0 - (proj_z-(double)(z_s));
+                        b = 1.0 -f;
+
+                        i1 = (double)(src[z_s*nslicesz + y_s*sx + x_s]) * f + (double)(src[z_e*nslicesz + y_s*sx + x_s]) * b;
+                        i2 = (double)(src[z_s*nslicesz + y_e*sx + x_s]) * f + (double)(src[z_e*nslicesz + y_e*sx + x_s]) * b;
+                        j1 = (double)(src[z_s*nslicesz + y_s*sx + x_e]) * f + (double)(src[z_e*nslicesz + y_s*sx + x_e]) * b;
+                        j2 = (double)(src[z_s*nslicesz + y_e*sx + x_e]) * f + (double)(src[z_e*nslicesz + y_e*sx + x_e]) * b;
+
+                        w1 = i1 * u + i2 * d;
+                        w2 = j1 * u + j2 * d;
+
+                        dst[z*slicesz + y*dx + x] = (Tdata)(w1 * l + w2 * r + 0.5);
+                    }
                 }
                 else
                 {

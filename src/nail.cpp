@@ -676,7 +676,7 @@ double ImageProcess::imageCompare(BioMedicalData *reference, SimilarityType simi
     return metric;
 }
 
-void ImageProcess::sampling(BioMedicalData *image, double srx, double sry, double srz)
+void ImageProcess::sampling(BioMedicalData *image, double srx, double sry, double srz, int interptype)
 {
     //
     long sx = image->size.getX();
@@ -702,7 +702,7 @@ void ImageProcess::sampling(BioMedicalData *image, double srx, double sry, doubl
             unsigned char *p1 = (unsigned char *) (m_image->data());
             unsigned char *p2 = (unsigned char *) (image->data());
 
-            isampler<unsigned char, long>(p1, p2, dx, dy, dz, sx, sy, sz, srx, sry, srz);
+            isampler<unsigned char, long>(p1, p2, dx, dy, dz, sx, sy, sz, srx, sry, srz, (InterpolationType)interptype);
         }
         else
         {
@@ -1319,6 +1319,16 @@ int Nail::convert2byte(string in, string out)
             }
         }
     }
+    else if(process.getImage()->dataType()==FLOAT)
+    {
+        float *pIn = (float *)(process.getImage()->data());
+        unsigned char *pOut = (unsigned char *)(dpm.data()->data());
+
+        for(int i=0; i<process.getImage()->size.size(); i++)
+        {
+            pOut[i] = pIn[i];
+        }
+    }
     else
     {
         // other data types
@@ -1334,7 +1344,7 @@ int Nail::convert2byte(string in, string out)
     return 0;
 }
 
-int Nail::imageSampling(string in, string out, double srx, double sry, double srz)
+int Nail::imageSampling(string in, string out, double srx, double sry, double srz, int interptype)
 {
     //
     BioMedicalDataIO bmdata;
@@ -1346,7 +1356,7 @@ int Nail::imageSampling(string in, string out, double srx, double sry, double sr
     }
 
     //
-    process.sampling(bmdata.data(), srx, sry, srz);
+    process.sampling(bmdata.data(), srx, sry, srz, interptype);
 
     //
     save(out);
@@ -1355,3 +1365,34 @@ int Nail::imageSampling(string in, string out, double srx, double sry, double sr
     return 0;
 }
 
+int Nail::imageTranslate(string in, string out, long x, long y, long z, long sx, long sy, long sz)
+{
+    // input image
+    BioMedicalDataIO bmdata;
+
+    if(bmdata.readData(in)!=0)
+    {
+        cout<<"Fail to read data!"<<endl;
+        return -1;
+    }
+
+    long osx = bmdata.data()->size.getX();
+    long osy = bmdata.data()->size.getY();
+    long osz = bmdata.data()->size.getZ();
+    long osc = bmdata.data()->size.getC();
+
+    // translated image
+    BioMedicalDataIO translated;
+    translated.data()->size.setSize(process.getImage()->size);
+    translated.data()->setDataType(UCHAR);
+    translated.data()->zeros();
+
+    //
+
+
+    //
+    save(out);
+
+    //
+    return 0;
+}
