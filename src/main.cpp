@@ -176,6 +176,12 @@ int main(int argc, char *argv[])
             Nail nail;
             nail.convert2byte(FLAGS_i, FLAGS_o);
         }
+        else if(FLAGS_f == "convertIndex2Color")
+        {
+            cout<<"\n nail -f convertIndex2Color -i <input> -o <output> \n"<<endl;
+            Nail nail;
+            nail.convertIndex2Color(FLAGS_i, FLAGS_o);
+        }
         else if(FLAGS_f == "help")
         {
             cout<<endl<<"nail -f <function>"<<endl;
@@ -193,6 +199,7 @@ int main(int argc, char *argv[])
             cout<<"\t"<<"imageResize"<<endl;
             cout<<"\t"<<"seq2stack"<<endl;
             cout<<"\t"<<"convert2byte"<<endl;
+            cout<<"\t"<<"convertIndex2Color"<<endl;
             cout<<endl;
         }
         else

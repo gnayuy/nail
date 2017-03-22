@@ -21,6 +21,85 @@ bool floatVarCompare(float x, float y)
         return false;
 }
 
+// class ColorLUT
+ColorRGBLUT::ColorRGBLUT()
+{
+    // init
+    colors.push_back(Tuplet<unsigned char>(129,251,84));
+    colors.push_back(Tuplet<unsigned char>(223,225,191));
+    colors.push_back(Tuplet<unsigned char>(86,71,135));
+    colors.push_back(Tuplet<unsigned char>(136,234,123));
+    colors.push_back(Tuplet<unsigned char>(161,84,55));
+    colors.push_back(Tuplet<unsigned char>(91,121,227));
+    colors.push_back(Tuplet<unsigned char>(142,153,63));
+    colors.push_back(Tuplet<unsigned char>(67,13,166));
+    colors.push_back(Tuplet<unsigned char>(134,41,255));
+    colors.push_back(Tuplet<unsigned char>(112,143,5));
+    colors.push_back(Tuplet<unsigned char>(9,205,72));
+    colors.push_back(Tuplet<unsigned char>(211,6,181));
+    colors.push_back(Tuplet<unsigned char>(19,178,172));
+    colors.push_back(Tuplet<unsigned char>(49,70,54));
+    colors.push_back(Tuplet<unsigned char>(246,22,116));
+    colors.push_back(Tuplet<unsigned char>(124,65,113));
+    colors.push_back(Tuplet<unsigned char>(112,1,51));
+    colors.push_back(Tuplet<unsigned char>(192,13,51));
+    colors.push_back(Tuplet<unsigned char>(94,230,166));
+    colors.push_back(Tuplet<unsigned char>(195,168,219));
+    colors.push_back(Tuplet<unsigned char>(96,191,103));
+    colors.push_back(Tuplet<unsigned char>(37,49,98));
+    colors.push_back(Tuplet<unsigned char>(79,9,159));
+    colors.push_back(Tuplet<unsigned char>(169,11,128));
+    colors.push_back(Tuplet<unsigned char>(71,165,172));
+    colors.push_back(Tuplet<unsigned char>(235,36,146));
+    colors.push_back(Tuplet<unsigned char>(197,133,140));
+    colors.push_back(Tuplet<unsigned char>(171,82,156));
+    colors.push_back(Tuplet<unsigned char>(249,186,93));
+    colors.push_back(Tuplet<unsigned char>(126,140,113));
+    colors.push_back(Tuplet<unsigned char>(94,51,81));
+    colors.push_back(Tuplet<unsigned char>(123,100,239));
+    colors.push_back(Tuplet<unsigned char>(66,81,247));
+    colors.push_back(Tuplet<unsigned char>(69,13,204));
+    colors.push_back(Tuplet<unsigned char>(187,28,148));
+    colors.push_back(Tuplet<unsigned char>(125,212,97));
+    colors.push_back(Tuplet<unsigned char>(56,191,13));
+    colors.push_back(Tuplet<unsigned char>(128,213,136));
+    colors.push_back(Tuplet<unsigned char>(182,147,139));
+    colors.push_back(Tuplet<unsigned char>(2,80,86));
+    colors.push_back(Tuplet<unsigned char>(66,221,233));
+    colors.push_back(Tuplet<unsigned char>(225,234,97));
+    colors.push_back(Tuplet<unsigned char>(72,20,133));
+    colors.push_back(Tuplet<unsigned char>(70,200,209));
+    colors.push_back(Tuplet<unsigned char>(229,67,3));
+    colors.push_back(Tuplet<unsigned char>(235,53,102));
+    colors.push_back(Tuplet<unsigned char>(54,225,56));
+    colors.push_back(Tuplet<unsigned char>(41,94,73));
+    colors.push_back(Tuplet<unsigned char>(83,63,37));
+    colors.push_back(Tuplet<unsigned char>(13,76,50));
+    colors.push_back(Tuplet<unsigned char>(127,87,206));
+    colors.push_back(Tuplet<unsigned char>(174,19,76));
+    colors.push_back(Tuplet<unsigned char>(179,153,90));
+    colors.push_back(Tuplet<unsigned char>(124,1,234));
+    colors.push_back(Tuplet<unsigned char>(136,20,176));
+    colors.push_back(Tuplet<unsigned char>(53,45,215));
+    colors.push_back(Tuplet<unsigned char>(48,8,153));
+    colors.push_back(Tuplet<unsigned char>(210,173,248));
+    colors.push_back(Tuplet<unsigned char>(3,201,15));
+    colors.push_back(Tuplet<unsigned char>(122,104,114));
+    colors.push_back(Tuplet<unsigned char>(194,114,52));
+    colors.push_back(Tuplet<unsigned char>(105,58,139));
+    colors.push_back(Tuplet<unsigned char>(162,221,53));
+    colors.push_back(Tuplet<unsigned char>(75,227,13));
+    colors.push_back(Tuplet<unsigned char>(190,229,255));
+    colors.push_back(Tuplet<unsigned char>(118,244,204));
+    colors.push_back(Tuplet<unsigned char>(126,200,143));
+    colors.push_back(Tuplet<unsigned char>(11,198,156));
+}
+
+ColorRGBLUT::~ColorRGBLUT()
+{
+
+}
+
 // class IntensityRange
 IntensityRange::IntensityRange()
 {
@@ -1141,12 +1220,18 @@ int Nail::seq2stack(string in, string out, long zpos, long zstep, long z)
     vector<string> imList;
     ifstream fin(const_cast<char*>(in.c_str()));
 
+    struct stat buffer;
+    long nFiles = 0;
     if(fin.is_open())
     {
         while( getline(fin, fn) )
         {
-            cout<<fn<<endl;
-            imList.push_back(fn);
+            if(stat (fn.c_str(), &buffer) == 0)
+            {
+                imList.push_back(fn);
+                nFiles++;
+            }
+            cout<<fn<<" "<<nFiles<<endl;
         }
         fin.close();
     }
@@ -1157,13 +1242,13 @@ int Nail::seq2stack(string in, string out, long zpos, long zstep, long z)
     }
 
     //
-    if(z<imList.size())
+    if(z<nFiles)
     {
-        z = imList.size();
+        z = nFiles;
     }
     else
     {
-        if(zpos + (imList.size() - 1)*zstep > z)
+        if(zpos + (nFiles - 1)*zstep > z)
         {
             cout << "z dimension is invalid." << endl;
             return -1;
@@ -1391,6 +1476,59 @@ int Nail::imageTranslate(string in, string out, long x, long y, long z, long sx,
 
 
     //
+    save(out);
+
+    //
+    return 0;
+}
+
+int Nail::convertIndex2Color(string in, string out)
+{
+    // input indexed image
+    load(in);
+
+    long sx = process.getImage()->size.getX();
+    long sy = process.getImage()->size.getY();
+    long sz = process.getImage()->size.getZ();
+    long sc = 3;
+
+    // RGB image
+    BioMedicalDataIO colorImage;
+    colorImage.data()->size.setXYZCT(sx, sy, sz, sc, 1);
+    colorImage.data()->setDataType(UCHAR);
+    colorImage.data()->zeros();
+
+    //
+    ColorRGBLUT colorlut;
+
+    long pagesz = sx*sy*sz;
+    long pagesz2 = 2*pagesz;
+
+    if(process.getImage()->dataType()==UCHAR)
+    {
+        unsigned char *pIn = (unsigned char *)(process.getImage()->data());
+        unsigned char *pOut = (unsigned char *)(colorImage.data()->data());
+
+        for(long i=0; i<pagesz; i++)
+        {
+            if(pIn[i]>1)
+            {
+                long idx = pIn[i];
+
+                pOut[i] = colorlut.colors[idx].getX();
+                pOut[i+pagesz] = colorlut.colors[idx].getY();
+                pOut[i+pagesz2] = colorlut.colors[idx].getZ();
+
+            }
+        }
+    }
+    else
+    {
+        // other data types
+    }
+
+    //
+    process.setImage(colorImage.data());
     save(out);
 
     //

@@ -13,6 +13,7 @@
 
 //
 #include <sys/time.h>
+#include <sys/stat.h>
 #include <gflags/gflags.h>
 
 #include "image.h"
@@ -44,6 +45,15 @@ public:
 
 public:
     long _min, _max;
+};
+
+class ColorRGBLUT
+{
+public:
+    ColorRGBLUT();
+    ~ColorRGBLUT();
+public:
+    vector<Tuplet<unsigned char> > colors;
 };
 
 class ImageProcess
@@ -100,6 +110,7 @@ public:
     int convert2byte(string in, string out);
     int imageSampling(string in, string out, double srx, double sry, double srz, int interptype);
     int imageTranslate(string in, string out, long x, long y, long z, long sx, long sy, long sz);
+    int convertIndex2Color(string in, string out);
 
 public:
     ImageProcess process;
