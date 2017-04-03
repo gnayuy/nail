@@ -111,6 +111,7 @@ public:
     int imageSampling(string in, string out, double srx, double sry, double srz, int interptype);
     int imageTranslate(string in, string out, long x, long y, long z, long sx, long sy, long sz);
     int convertIndex2Color(string in, string out);
+    int intensityRescale(string in, string out, double min, double max);
 
 public:
     ImageProcess process;

@@ -50,6 +50,9 @@ DEFINE_double(r, 0.0, "x1");
 DEFINE_double(d, 0.0, "y0");
 DEFINE_double(u, 0.0, "y1");
 
+DEFINE_double(min, 0.0, "min value");
+DEFINE_double(max, 0.0, "max value");
+
 DEFINE_uint64(interp, 2, "interpolation type (Linear by default)");
 
 //
@@ -182,6 +185,12 @@ int main(int argc, char *argv[])
             Nail nail;
             nail.convertIndex2Color(FLAGS_i, FLAGS_o);
         }
+        else if(FLAGS_f == "intensityRescale")
+        {
+            cout<<"\n nail -f intensityRescale -i <input> -o <output> -min <min_intensity> -max <max_intensity> \n"<<endl;
+            Nail nail;
+            nail.intensityRescale(FLAGS_i, FLAGS_o, FLAGS_min, FLAGS_max);
+        }
         else if(FLAGS_f == "help")
         {
             cout<<endl<<"nail -f <function>"<<endl;
@@ -200,6 +209,7 @@ int main(int argc, char *argv[])
             cout<<"\t"<<"seq2stack"<<endl;
             cout<<"\t"<<"convert2byte"<<endl;
             cout<<"\t"<<"convertIndex2Color"<<endl;
+            cout<<"\t"<<"intensityRescale"<<endl;
             cout<<endl;
         }
         else

@@ -1534,3 +1534,51 @@ int Nail::convertIndex2Color(string in, string out)
     //
     return 0;
 }
+
+int Nail::intensityRescale(string in, string out, double min, double max)
+{
+    //
+    if(max<=min)
+    {
+        cout<<"Invalid inputs for intensityRescale"<<endl;
+        return -1;
+    }
+
+    // input indexed image
+    load(in);
+
+    long sx = process.getImage()->size.getX();
+    long sy = process.getImage()->size.getY();
+    long sz = process.getImage()->size.getZ();
+
+    long volumesz = sx*sy*sz;
+    double dist = max - min;
+
+    //
+    if(process.getImage()->dataType()==UCHAR)
+    {
+        unsigned char *p = (unsigned char *)(process.getImage()->data());
+
+        for(long i=0; i<volumesz; i++)
+        {
+            if(p[i]>max)
+            {
+                p[i] = 255;
+            }
+            else
+            {
+                p[i] = 255*(p[i] - min) / dist;
+            }
+        }
+    }
+    else
+    {
+        // other data types
+    }
+
+    //
+    save(out);
+
+    //
+    return 0;
+}
