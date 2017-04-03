@@ -291,13 +291,16 @@ template <class T>
 int Vec1D <T> :: getFileList(string fn)
 {
     string str;
+    struct stat buffer;
     ifstream fin(const_cast<char*>(fn.c_str()));
-
     if(fin.is_open())
     {
         while( getline(fin, str) )
         {
-            items.push_back(str);
+            if(stat (str.c_str(), &buffer) == 0)
+            {
+                items.push_back(str);
+            }
         }
         fin.close();
     }
