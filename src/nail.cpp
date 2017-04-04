@@ -1582,3 +1582,58 @@ int Nail::intensityRescale(string in, string out, double min, double max)
     //
     return 0;
 }
+
+int Nail::imageDivide(string im1, string im2, string out)
+{
+    // input indexed image
+    load(im1);
+
+    long sx = process.getImage()->size.getX();
+    long sy = process.getImage()->size.getY();
+    long sz = process.getImage()->size.getZ();
+
+    BioMedicalDataIO bmdata;
+
+    if(bmdata.readData(im2)!=0)
+    {
+        cout<<"Fail to read data!"<<endl;
+        return -1;
+    }
+
+    long sx2 = bmdata.data()->size.getX();
+    long sy2 = bmdata.data()->size.getY();
+    long sz2 = bmdata.data()->size.getZ();
+
+    if(sx!=sx2 || sy!=sy2 || sz!=sz2)
+    {
+        cout<<"Inconsistent dimenstions"<<endl;
+        return -1;
+    }
+
+    long volumesz = sx*sy*sz;
+
+    //
+    if(process.getImage()->dataType()==UCHAR)
+    {
+        unsigned char *p = (unsigned char *)(process.getImage()->data());
+        unsigned char *p2 = (unsigned char *)(bmdata.data()->data());
+
+        for(long i=0; i<volumesz; i++)
+        {
+            if(p2[i]>0)
+            {
+                p[i] /= p2[i];
+            }
+        }
+    }
+    else
+    {
+        // other data types
+    }
+
+    //
+    save(out);
+
+    //
+    return 0;
+}

@@ -112,6 +112,7 @@ public:
     int imageTranslate(string in, string out, long x, long y, long z, long sx, long sy, long sz);
     int convertIndex2Color(string in, string out);
     int intensityRescale(string in, string out, double min, double max);
+    int imageDivide(string im1, string im2, string out);
 
 public:
     ImageProcess process;

@@ -191,6 +191,12 @@ int main(int argc, char *argv[])
             Nail nail;
             nail.intensityRescale(FLAGS_i, FLAGS_o, FLAGS_min, FLAGS_max);
         }
+        else if(FLAGS_f == "imageDivide")
+        {
+            cout<<"\n nail -f imageDivide -i <input> -ref <refimage> -o <output> \n"<<endl;
+            Nail nail;
+            nail.imageDivide(FLAGS_i, FLAGS_ref, FLAGS_o);
+        }
         else if(FLAGS_f == "help")
         {
             cout<<endl<<"nail -f <function>"<<endl;
@@ -210,6 +216,7 @@ int main(int argc, char *argv[])
             cout<<"\t"<<"convert2byte"<<endl;
             cout<<"\t"<<"convertIndex2Color"<<endl;
             cout<<"\t"<<"intensityRescale"<<endl;
+            cout<<"\t"<<"imageDivide"<<endl;
             cout<<endl;
         }
         else
