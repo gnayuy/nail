@@ -1414,6 +1414,11 @@ int Nail::convert2byte(string in, string out)
             pOut[i] = pIn[i];
         }
     }
+    else if(process.getImage()->dataType()==UCHAR)
+    {
+        save(out);
+        return 0;
+    }
     else
     {
         // other data types
