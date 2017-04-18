@@ -549,7 +549,38 @@ void ImageProcess::im2bw(double threshold, double v)
 
 void ImageProcess::add(BioMedicalData *image)
 {
+    if(m_image->data() && image->data())
+    {
+        if(m_image->dataType()==UCHAR && image->dataType()==UCHAR)
+        {
+            unsigned char *p1 = (unsigned char *) (m_image->data());
+            unsigned char *p2 = (unsigned char *) (image->data());
 
+            long size = m_image->size.size();
+            if(size!=image->size.size())
+            {
+                cout<<"image size does not match\n";
+                return;
+            }
+
+            for(long i=0; i<size; i++)
+            {
+                if(p1[i]==0 && p2[i]>0)
+                    p1[i] = p2[i];
+            }
+
+        }
+        else
+        {
+            cout<<"unsupported data type\n";
+            return;
+        }
+    }
+    else
+    {
+        cout<<"Null image\n";
+        return;
+    }
 }
 
 void ImageProcess::multiply(double v)
@@ -1590,7 +1621,7 @@ int Nail::intensityRescale(string in, string out, double min, double max)
 
 int Nail::imageDivide(string im1, string im2, string out)
 {
-    // input indexed image
+    //
     load(im1);
 
     long sx = process.getImage()->size.getX();
@@ -1635,6 +1666,43 @@ int Nail::imageDivide(string im1, string im2, string out)
     {
         // other data types
     }
+
+    //
+    save(out);
+
+    //
+    return 0;
+}
+
+int Nail::imageAdd(string im1, string im2, string out)
+{
+    //
+    load(im1);
+
+    long sx = process.getImage()->size.getX();
+    long sy = process.getImage()->size.getY();
+    long sz = process.getImage()->size.getZ();
+
+    BioMedicalDataIO bmdata;
+
+    if(bmdata.readData(im2)!=0)
+    {
+        cout<<"Fail to read data!"<<endl;
+        return -1;
+    }
+
+    long sx2 = bmdata.data()->size.getX();
+    long sy2 = bmdata.data()->size.getY();
+    long sz2 = bmdata.data()->size.getZ();
+
+    if(sx!=sx2 || sy!=sy2 || sz!=sz2)
+    {
+        cout<<"Inconsistent dimenstions"<<endl;
+        return -1;
+    }
+
+    //
+    process.add(bmdata.data());
 
     //
     save(out);

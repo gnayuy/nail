@@ -113,6 +113,7 @@ public:
     int convertIndex2Color(string in, string out);
     int intensityRescale(string in, string out, double min, double max);
     int imageDivide(string im1, string im2, string out);
+    int imageAdd(string im1, string im2, string out);
 
 public:
     ImageProcess process;

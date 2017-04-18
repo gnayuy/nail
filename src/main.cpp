@@ -193,9 +193,15 @@ int main(int argc, char *argv[])
         }
         else if(FLAGS_f == "imageDivide")
         {
-            cout<<"\n nail -f imageDivide -i <input> -ref <refimage> -o <output> \n"<<endl;
+            cout<<"\n nail -f imageDivide -i <image1> -ref <image2> -o <output> \n"<<endl;
             Nail nail;
             nail.imageDivide(FLAGS_i, FLAGS_ref, FLAGS_o);
+        }
+        else if(FLAGS_f == "imageAdd")
+        {
+            cout<<"\n nail -f imageAdd -i <image1> -ref <image2> -o <output> \n"<<endl;
+            Nail nail;
+            nail.imageAdd(FLAGS_i, FLAGS_ref, FLAGS_o);
         }
         else if(FLAGS_f == "help")
         {
@@ -217,6 +223,7 @@ int main(int argc, char *argv[])
             cout<<"\t"<<"convertIndex2Color"<<endl;
             cout<<"\t"<<"intensityRescale"<<endl;
             cout<<"\t"<<"imageDivide"<<endl;
+            cout<<"\t"<<"imageAdd"<<endl;
             cout<<endl;
         }
         else
