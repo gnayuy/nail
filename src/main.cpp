@@ -53,6 +53,8 @@ DEFINE_double(u, 0.0, "y1");
 DEFINE_double(min, 0.0, "min value");
 DEFINE_double(max, 0.0, "max value");
 
+DEFINE_double(thresh, -1.0, "threshold");
+
 DEFINE_uint64(interp, 2, "interpolation type (Linear by default)");
 
 //
@@ -123,9 +125,9 @@ int main(int argc, char *argv[])
         }
         else if(FLAGS_f == "binarize")
         {
-            cout<<"\n nail -f binarize -i <input> -o <output>\n"<<endl;
+            cout<<"\n nail -f binarize -i <input> -o <output> -thresh <threshold>\n"<<endl;
             Nail nail;
-            nail.binarize(FLAGS_i, FLAGS_o);
+            nail.binarize(FLAGS_i, FLAGS_o, FLAGS_thresh);
         }
         else if(FLAGS_f == "imageCompare")
         {

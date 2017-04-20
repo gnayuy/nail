@@ -246,6 +246,7 @@ void ImageProcess::thresholding()
 
         //
         unsigned short threshold = (mub+muf)/2;
+        cout<<"threshold "<<threshold<<endl;
         for(long i=0; i<pagesz; i++)
         {
             if(data[i]>threshold)
@@ -328,6 +329,7 @@ void ImageProcess::thresholding()
 
         //
         unsigned short threshold = (mub+muf)/2;
+        cout<<"threshold "<<threshold<<endl;
         for(long i=0; i<pagesz; i++)
         {
             if(data[i]>threshold)
@@ -1055,13 +1057,47 @@ int Nail::countVoxels(string in, string out, string s, bool withMask, int nLabel
     return 0;
 }
 
-int Nail::binarize(string in, string out)
+int Nail::binarize(string in, string out, double thresh)
 {
     //
     load(in);
 
     //
-    process.thresholding();
+    if(thresh>0)
+    {
+        long sx = process.getImage()->size.getX();
+        long sy = process.getImage()->size.getY();
+        long sz = process.getImage()->size.getZ();
+
+        long volumesz = sx*sy*sz;
+
+        //
+        if(process.getImage()->dataType()==UCHAR)
+        {
+            unsigned char *p = (unsigned char *)(process.getImage()->data());
+
+            for(long i=0; i<volumesz; i++)
+            {
+                if(p[i]>thresh)
+                {
+                    p[i] = 1;
+                }
+                else
+                {
+                    p[i] = 0;
+                }
+            }
+        }
+        else
+        {
+            // other data types
+        }
+
+    }
+    else
+    {
+        process.thresholding();
+    }
 
     //
     save(out);

@@ -101,7 +101,7 @@ public:
     int genMaskImageFromLabels(string in, string out, string s, bool exclude);
     int genLabelImage(string in, string out);
     int countVoxels(string in, string out, string s, bool withMask=false, int nLabels=1);
-    int binarize(string in, string out);
+    int binarize(string in, string out, double thresh=-1.0);
     int imageCompare(string in, string out, string ref, SimilarityType similarity);
     int constructStack(string in, string out, long z, double k, double b);
     int findOptimalPath(string in, string out, long sx, long sy, double minY0, double maxY0, double minY, double maxY);
