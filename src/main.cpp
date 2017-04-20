@@ -203,6 +203,12 @@ int main(int argc, char *argv[])
             Nail nail;
             nail.imageAdd(FLAGS_i, FLAGS_ref, FLAGS_o);
         }
+        else if(FLAGS_f == "genVOIs")
+        {
+            cout<<"\n nail -f genVOIs -i <image1> -ref <image2> \n"<<endl;
+            Nail nail;
+            nail.genVOIs(FLAGS_i, FLAGS_ref);
+        }
         else if(FLAGS_f == "help")
         {
             cout<<endl<<"nail -f <function>"<<endl;
@@ -224,6 +230,7 @@ int main(int argc, char *argv[])
             cout<<"\t"<<"intensityRescale"<<endl;
             cout<<"\t"<<"imageDivide"<<endl;
             cout<<"\t"<<"imageAdd"<<endl;
+            cout<<"\t"<<"genVOIs"<<endl;
             cout<<endl;
         }
         else
