@@ -114,6 +114,7 @@ public:
     int intensityRescale(string in, string out, double min, double max);
     int imageDivide(string im1, string im2, string out);
     int imageAdd(string im1, string im2, string out);
+    int genVOIs(string im1, string im2);
 
 public:
     ImageProcess process;

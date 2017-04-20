@@ -1746,3 +1746,359 @@ int Nail::imageAdd(string im1, string im2, string out)
     //
     return 0;
 }
+
+int Nail::genVOIs(string im1, string im2)
+{
+    // find min max
+    long minx=INF, miny=INF, minz=INF;
+    long maxx=0, maxy=0, maxz=0;
+
+    //
+    load(im1);
+
+    long sx = process.getImage()->size.getX();
+    long sy = process.getImage()->size.getY();
+    long sz = process.getImage()->size.getZ();
+
+    long pgsz = sx*sy;
+
+    if(process.getImage()->dataType()==UCHAR)
+    {
+        unsigned char *p = (unsigned char *)(process.getImage()->data());
+
+        // x
+        bool found = false;
+        for(long x=0; x<sx; x++)
+        {
+            for(long y=0; y<sy; y++)
+            {
+                long ofy = y*sx;
+                for(long z=0; z<sz; z++)
+                {
+                    if(p[z*pgsz + ofy + x])
+                    {
+                        found = true;
+                    }
+                }
+            }
+            if(found)
+            {
+                if(minx > x)
+                {
+                    minx = x - 1;
+                }
+                break;
+            }
+        }
+
+        found = false;
+        for(long x=sx-1; x>0; x--)
+        {
+            for(long y=0; y<sy; y++)
+            {
+                long ofy = y*sx;
+                for(long z=0; z<sz; z++)
+                {
+                    if(p[z*pgsz + ofy + x])
+                    {
+                        found = true;
+                    }
+                }
+            }
+            if(found)
+            {
+                if(maxx < x)
+                {
+                    maxx = x + 1;
+                }
+                break;
+            }
+        }
+
+        // y
+        found = false;
+        for(long y=0; y<sy; y++)
+        {
+            long ofy = y*sx;
+            for(long z=0; z<sz; z++)
+            {
+                long ofz = z*pgsz + ofy;
+                for(long x=0; x<sx; x++)
+                {
+                    if(p[ofz + x])
+                    {
+                        found = true;
+                    }
+                }
+            }
+            if(found)
+            {
+                if(miny > y)
+                {
+                    miny = y - 1;
+                }
+                break;
+            }
+        }
+
+        found = false;
+        for(long y=sy-1; y>0; y--)
+        {
+            long ofy = y*sx;
+            for(long z=0; z<sz; z++)
+            {
+                long ofz = z*pgsz + ofy;
+                for(long x=0; x<sx; x++)
+                {
+                    if(p[ofz + x])
+                    {
+                        found = true;
+                    }
+                }
+            }
+            if(found)
+            {
+                if(maxy < y)
+                {
+                    maxy = y + 1;
+                }
+                break;
+            }
+        }
+
+        // z
+        found = false;
+        for(long z=0; z<sz; z++)
+        {
+            long ofz = z*pgsz;
+            for(long y=0; y<sy; y++)
+            {
+                long ofy = ofz + y*sx;
+                for(long x=0; x<sx; x++)
+                {
+                    if(p[ofy + x])
+                    {
+                        found = true;
+                    }
+                }
+            }
+            if(found)
+            {
+                if(minz > z)
+                {
+                    minz = z - 1;
+                }
+                break;
+            }
+        }
+
+        found = false;
+        for(long z=sz-1; z>0; z--)
+        {
+            long ofz = z*pgsz;
+            for(long y=0; y<sy; y++)
+            {
+                long ofy = ofz + y*sx;
+                for(long x=0; x<sx; x++)
+                {
+                    if(p[ofy + x])
+                    {
+                        found = true;
+                    }
+                }
+            }
+            if(found)
+            {
+                if(maxz < z)
+                {
+                    maxz = z + 1;
+                }
+                break;
+            }
+        }
+
+    }
+    else
+    {
+        // other data types
+    }
+
+    //
+    load(im2);
+
+    sx = process.getImage()->size.getX();
+    sy = process.getImage()->size.getY();
+    sz = process.getImage()->size.getZ();
+
+    pgsz = sx*sy;
+
+    if(process.getImage()->dataType()==UCHAR)
+    {
+        unsigned char *p = (unsigned char *)(process.getImage()->data());
+
+        // x
+        bool found = false;
+        for(long x=0; x<sx; x++)
+        {
+            for(long y=0; y<sy; y++)
+            {
+                long ofy = y*sx;
+                for(long z=0; z<sz; z++)
+                {
+                    if(p[z*pgsz + ofy + x])
+                    {
+                        found = true;
+                    }
+                }
+            }
+            if(found)
+            {
+                if(minx > x)
+                {
+                    minx = x - 1;
+                }
+                break;
+            }
+        }
+
+        found = false;
+        for(long x=sx-1; x>0; x--)
+        {
+            for(long y=0; y<sy; y++)
+            {
+                long ofy = y*sx;
+                for(long z=0; z<sz; z++)
+                {
+                    if(p[z*pgsz + ofy + x])
+                    {
+                        found = true;
+                    }
+                }
+            }
+            if(found)
+            {
+                if(maxx < x)
+                {
+                    maxx = x + 1;
+                }
+                break;
+            }
+        }
+
+        // y
+        found = false;
+        for(long y=0; y<sy; y++)
+        {
+            long ofy = y*sx;
+            for(long z=0; z<sz; z++)
+            {
+                long ofz = z*pgsz + ofy;
+                for(long x=0; x<sx; x++)
+                {
+                    if(p[ofz + x])
+                    {
+                        found = true;
+                    }
+                }
+            }
+            if(found)
+            {
+                if(miny > y)
+                {
+                    miny = y - 1;
+                }
+                break;
+            }
+        }
+
+        found = false;
+        for(long y=sy-1; y>0; y--)
+        {
+            long ofy = y*sx;
+            for(long z=0; z<sz; z++)
+            {
+                long ofz = z*pgsz + ofy;
+                for(long x=0; x<sx; x++)
+                {
+                    if(p[ofz + x])
+                    {
+                        found = true;
+                    }
+                }
+            }
+            if(found)
+            {
+                if(maxy < y)
+                {
+                    maxy = y + 1;
+                }
+                break;
+            }
+        }
+
+        // z
+        found = false;
+        for(long z=0; z<sz; z++)
+        {
+            long ofz = z*pgsz;
+            for(long y=0; y<sy; y++)
+            {
+                long ofy = ofz + y*sx;
+                for(long x=0; x<sx; x++)
+                {
+                    if(p[ofy + x])
+                    {
+                        found = true;
+                    }
+                }
+            }
+            if(found)
+            {
+                if(minz > z)
+                {
+                    minz = z - 1;
+                }
+                break;
+            }
+        }
+
+        found = false;
+        for(long z=sz-1; z>0; z--)
+        {
+            long ofz = z*pgsz;
+            for(long y=0; y<sy; y++)
+            {
+                long ofy = ofz + y*sx;
+                for(long x=0; x<sx; x++)
+                {
+                    if(p[ofy + x])
+                    {
+                        found = true;
+                    }
+                }
+            }
+            if(found)
+            {
+                if(maxz < z)
+                {
+                    maxz = z + 1;
+                }
+                break;
+            }
+        }
+
+    }
+    else
+    {
+        // other data types
+    }
+
+    //
+    cout<<"# IREG Crop Configuration File v1.0\n";
+    cout<<im1<<endl<<endl;
+    cout<<minx<<" "<<maxx<<" "<<miny<<" "<<maxy<<" "<<minz<<" "<<maxz<<"\n";
+    cout<<sx<<" "<<sy<<" "<<sz<<endl;
+
+    //
+    return 0;
+}
