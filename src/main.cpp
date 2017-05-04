@@ -21,9 +21,9 @@ DEFINE_uint64(x, 0, "offset (voxels) in x axis");
 DEFINE_uint64(y, 0, "offset (voxels) in y axis");
 DEFINE_uint64(z, 0, "offset (voxels) in z axis");
 
-DEFINE_double(vx, -1.0, "voxel size in x axis");
-DEFINE_double(vy, -1.0, "voxel size in y axis");
-DEFINE_double(vz, -1.0, "voxel size in z axis");
+DEFINE_double(vx, -1.0, "voxel size (microns/voxel) in x axis");
+DEFINE_double(vy, -1.0, "voxel size (microns/voxel) in y axis");
+DEFINE_double(vz, -1.0, "voxel size (microns/voxel) in z axis");
 
 DEFINE_double(gamma, 0.5, "gamma (0.5 by default) a non-linear histogram adjustment");
 DEFINE_string(s, "", "a string (e.g. labels, masks, ...)");
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
         }
         else if(FLAGS_f == "imageReadWrite")
         {
-            cout<<"\n nail -f imageReadWrite -i <input> -o <output> \n"<<endl;
+            cout<<"\n nail -f imageReadWrite -i <input> -o <output> -vx <microns> -vy <microns> -vz <microns> \n"<<endl;
             Nail nail;
             nail.imageReadWrite(FLAGS_i, FLAGS_o, FLAGS_vx, FLAGS_vy, FLAGS_vz);
         }
