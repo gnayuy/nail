@@ -1262,6 +1262,13 @@ int Nail::recenterImage(string in, string out, long x, long y, long z, long c)
 
         recenter<unsigned char, long>(pOut, dpm.data()->size, pIn, process.getImage()->size);
     }
+    if(process.getImage()->dataType()==USHORT)
+    {
+        unsigned short *pIn = (unsigned short *)(process.getImage()->data());
+        unsigned short *pOut = (unsigned short *)(dpm.data()->data());
+
+        recenter<unsigned short, long>(pOut, dpm.data()->size, pIn, process.getImage()->size);
+    }
     else
     {
         // other data types
